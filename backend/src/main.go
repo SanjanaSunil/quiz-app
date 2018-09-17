@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"encoding/json"
-	// "github.com/gin-contrib/cors"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/securecookie"
@@ -40,14 +39,17 @@ var router = mux.NewRouter()
 	db.AutoMigrate(&User{})
 
 	router.HandleFunc("/users", GetUsers)
-	router.HandleFunc("/user/{username}", GetUser)
-	// router.HandleFunc("/signup", SignUp).Methods("POST")
+	router.HandleFunc("/user/{id}", GetUser)
+
+	router.HandleFunc("/signup", SignUp).Methods("POST")
 
 	corsObj := handlers.AllowedOrigins([]string{"*"})
 
 	http.Handle("/", router)
 	log.Fatal(http.ListenAndServe(":8000", handlers.CORS(corsObj)(router)))
 }
+
+// ----------------------------------------------------
 
 // respondJSON makes the response with payload as json format
 func respondJSON(w http.ResponseWriter, status int, payload interface{}) {
@@ -67,11 +69,13 @@ func respondError(w http.ResponseWriter, code int, message string) {
 	respondJSON(w, code, map[string]string{"error": message})
 }
 
+// ---------------------------------------------
+
 func GetUser(response http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
-	username := vars["username"]
+	id := vars["id"]
 	var user User
-	if err := db.Where("username = ?", username).First(&user).Error; err != nil {
+	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
 	 	respondError(response, http.StatusNotFound, err.Error())
 	 	fmt.Println(err)
 	} else {
@@ -81,6 +85,26 @@ func GetUser(response http.ResponseWriter, request *http.Request) {
  
 func GetUsers(response http.ResponseWriter, request *http.Request) {
 	var users []User
-	db.Find(&users)
-	respondJSON(response, http.StatusOK, users)
+	if err := db.Find(&users).Error; err != nil {
+		respondError(response, http.StatusNotFound, err.Error())
+		fmt.Println(err)
+  	} else {
+		respondJSON(response, http.StatusOK, users)
+	}
+}
+
+func SignUp(response http.ResponseWriter, request *http.Request) {
+	var user User
+	decoder := json.NewDecoder(request.Body)
+	if err := decoder.Decode(&user); err != nil {
+		respondError(response, http.StatusBadRequest, err.Error())
+		return
+	}
+	defer request.Body.Close()
+ 
+	if err := db.Save(&user).Error; err != nil {
+		respondError(response, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondJSON(response, http.StatusCreated, user)
 }
