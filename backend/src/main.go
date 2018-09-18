@@ -19,6 +19,32 @@ var cookieHandler = securecookie.New(
 	securecookie.GenerateRandomKey(64),
 	securecookie.GenerateRandomKey(32))
 
+func setSession(userName string, response http.ResponseWriter) {
+	value := map[string]string{
+		"Username": userName,
+	}
+	if encoded, err := cookieHandler.Encode("session", value); err == nil {
+		cookie := &http.Cookie{
+			Name:  "session",
+			Value: encoded,
+			Path:  "/",
+		}
+		http.SetCookie(response, cookie)
+	}
+}
+
+func clearSession(response http.ResponseWriter) {
+	cookie := &http.Cookie{
+		Name:   "session",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	}
+	http.SetCookie(response, cookie)
+}
+
+// ---------------------------------------------------------------
+
 type User struct {
 	ID uint `json:"id"`
 	Username string `json:"username"`
@@ -40,8 +66,10 @@ var router = mux.NewRouter()
 
 	router.HandleFunc("/users", GetUsers)
 	router.HandleFunc("/user/{id}", GetUser)
-
+	router.HandleFunc("/user/{id}", DeleteUser).Methods("DELETE")
 	router.HandleFunc("/signup", SignUp).Methods("POST")
+	router.HandleFunc("/signin", SignIn).Methods("POST")
+	router.HandleFunc("/logout", Logout).Methods("POST")
 
 	corsObj := handlers.AllowedOrigins([]string{"*"})
 
@@ -93,6 +121,22 @@ func GetUsers(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
+func DeleteUser(response http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	id := vars["id"]
+	var user User
+	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
+		respondError(response, http.StatusNotFound, err.Error())
+		fmt.Println(err)
+   	}
+   	if err := db.Delete(&user).Error; err != nil {
+		respondError(response, http.StatusInternalServerError, err.Error())
+		fmt.Println(err)
+		return
+	}
+	respondJSON(response, http.StatusNoContent, nil)
+}
+
 func SignUp(response http.ResponseWriter, request *http.Request) {
 	var user User
 	decoder := json.NewDecoder(request.Body)
@@ -106,5 +150,28 @@ func SignUp(response http.ResponseWriter, request *http.Request) {
 		respondError(response, http.StatusInternalServerError, err.Error())
 		return
 	}
+	setSession(user.Username, response)
 	respondJSON(response, http.StatusCreated, user)
+}
+
+func SignIn(response http.ResponseWriter, request *http.Request) {
+	var user User
+	decoder := json.NewDecoder(request.Body)
+	if err := decoder.Decode(&user); err != nil {
+		respondError(response, http.StatusBadRequest, err.Error())
+		return
+	}
+	defer request.Body.Close()
+ 
+	if err := db.First(&user).Error; err != nil {
+		respondError(response, http.StatusNotFound, err.Error())
+		fmt.Println(err)
+   	} else {
+		setSession(user.Username, response)
+	   	respondJSON(response, http.StatusOK, user)
+	}
+}
+
+func Logout(response http.ResponseWriter, request *http.Request) {
+	clearSession(response)
 }
