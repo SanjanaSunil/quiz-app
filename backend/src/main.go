@@ -159,6 +159,7 @@ func SignUp(response http.ResponseWriter, request *http.Request) {
 	defer request.Body.Close()
  
 	if err := db.Save(&user).Error; err != nil {
+		fmt.Println("WHY IS THIS HAPPENING %s", user)
 		respondError(response, http.StatusInternalServerError, err.Error())
 		return
 	}
