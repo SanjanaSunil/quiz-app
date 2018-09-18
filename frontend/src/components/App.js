@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
-import Home from './Home';
-import LoggedIn from './LoggedIn';
-
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import Home from './homepage/Home';
+import Dashboard from './dashboard/Dashboard';
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      loggedIn: true
+      loggedIn: false
     }
   }
   render() {
     if (this.state.loggedIn) {
-      return (<LoggedIn />);
+      return (<Dashboard />);
     } else {
       return (<Home />);
     }

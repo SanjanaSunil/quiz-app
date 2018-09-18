@@ -1,24 +1,22 @@
 import React, { Component } from 'react';
 
-class Quiz extends Component {
+class SignIn extends Component {
   constructor() {
     super();
     this.state = {
-      followed: ""
+      data: []
     }
-    this.follow = this.follow.bind(this);
-  }
-
-  follow() {
-
   }
 
   componentDidMount() {
-
   }
 
   render() {
+    return (
+      <div className="App">
+      </div>
+    );
   }
 }
 
-export default Quiz;
+export default SignIn;
