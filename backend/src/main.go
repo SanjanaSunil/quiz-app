@@ -66,6 +66,7 @@ var router = mux.NewRouter()
 
 	router.HandleFunc("/users", GetUsers)
 	router.HandleFunc("/user/{id}", GetUser)
+	router.HandleFunc("/user", GetUserName)
 	router.HandleFunc("/user/{id}", DeleteUser).Methods("DELETE")
 	router.HandleFunc("/signup", SignUp).Methods("POST")
 	router.HandleFunc("/signin", SignIn).Methods("POST")
@@ -98,6 +99,17 @@ func respondError(w http.ResponseWriter, code int, message string) {
 }
 
 // ---------------------------------------------
+
+func GetUserName(response http.ResponseWriter, request *http.Request) {
+	var userName string
+	if cookie, err := request.Cookie("session"); err == nil {
+		cookieValue := make(map[string]string)
+		if err = cookieHandler.Decode("session", cookie.Value, &cookieValue); err == nil {
+			userName = cookieValue["Username"]
+		}
+	}
+	respondJSON(response, http.StatusOK, userName)
+}	
 
 func GetUser(response http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
