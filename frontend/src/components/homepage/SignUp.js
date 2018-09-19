@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Redirect from 'react-router-dom/Redirect';
 
 class SignUp extends Component {
   constructor() {
@@ -36,6 +37,9 @@ class SignUp extends Component {
   }
 
   render() {
+    if(this.state.submitted) {
+      return <Redirect to='/' />;
+    }
     return (
       <div className="App">
         <div className="container">
