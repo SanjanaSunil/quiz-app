@@ -5,7 +5,7 @@ class Dashboard extends Component {
     super();
     this.state = {
       data: [],
-      user: ""
+      user: [],
     }
   }
 
@@ -23,7 +23,6 @@ class Dashboard extends Component {
           <h1 className="App-title">Welcome to Qureka</h1>
         </header>
         <div className="container">
-          <h2>{this.state.user}</h2>
           <span className="pull-right"><a onClick={this.logout}>Log out</a></span>
         </div>
       </div>

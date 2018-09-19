@@ -9,6 +9,15 @@ class App extends Component {
       loggedIn: false
     }
   }
+  componentDidMount() {
+    const request = new Request('http://127.0.0.1:8000/user');
+    fetch(request)
+      .then(response => {
+        if(response.status === 200)
+                this.setState({loggedIn: true});
+                console.log(response);
+      });
+  }
   render() {
     if (this.state.loggedIn) {
       return (<Dashboard />);
