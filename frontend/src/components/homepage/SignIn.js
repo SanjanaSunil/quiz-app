@@ -1,17 +1,11 @@
 import React, { Component } from 'react';
-import Redirect from 'react-router-dom/Redirect';
-import Dashboard from '../dashboard/Dashboard'
 
 class SignIn extends Component {
     constructor() {
         super();
         this.state = {
-          data: [],
-          formData: {
-            username: "",
-            password: ""
-          },
-          submitted: false,
+          username: "",
+          password: ""
         }
         this.handleUChange = this.handleUChange.bind(this);
         this.handlePChange = this.handlePChange.bind(this);
@@ -26,21 +20,20 @@ class SignIn extends Component {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(this.state.formData),
+            body: JSON.stringify(this.state),
         })
             .then(response => {
                 if(response.status >= 200 && response.status < 300) {
-                    this.setState({submitted: true});
                     window.location = 'http://localhost:3000'
                 }
             });
     }
 
     handleUChange(event) {
-        this.state.formData.username = event.target.value;
+        this.setState({username: event.target.value});
     }
     handlePChange(event) {
-        this.state.formData.password = event.target.value;
+        this.setState({password: event.target.value});
     }
 
   render() {

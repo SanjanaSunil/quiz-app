@@ -36,10 +36,11 @@ class Dashboard extends Component {
         .then(response => {
             if(response.status >= 200 && response.status < 300) {
                 console.log("SUCCESSFULLY LOGGED OUT!");
+                window.location = 'http://localhost:3000'
             }
         });
   }
-  
+
   render() {
     return (
       <div className="App">
@@ -47,7 +48,7 @@ class Dashboard extends Component {
           <h1 className="App-title">Welcome to Qureka</h1>
         </header>
         <div className="container">
-          <span className="pull-right"><a onClick={this.logout}>Log out</a></span>
+          <span className="pull-right"><button onClick={this.logout} className="btn btn-primary btn-lg btn-login btn-block">Log out</button></span>
         </div>
       </div>
     );

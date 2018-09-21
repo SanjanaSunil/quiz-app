@@ -143,10 +143,10 @@ func SignUp(response http.ResponseWriter, request *http.Request) {
 		respondError(response, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondJSON(response, http.StatusOK, user)
 	session.Values["authenticated"] = true
 	session.Values["user"] = user.Username
 	session.Save(request, response)
+	respondJSON(response, http.StatusOK, user)
 }
 
 func SignIn(response http.ResponseWriter, request *http.Request) {
