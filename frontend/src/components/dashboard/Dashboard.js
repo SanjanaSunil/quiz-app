@@ -7,15 +7,39 @@ class Dashboard extends Component {
       data: [],
       user: [],
     }
+    this.logout = this.logout.bind(this);
   }
 
   componentDidMount() {
-    const request = new Request('http://127.0.0.1:8000/user');
-    fetch(request)
-      .then(response => response.json())
-        .then(user => this.setState({user: user}));
+    fetch('http://localhost:8000/user', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+      .then(response => {
+        if(response.status === 200)
+          console.log(response);
+      });
   }
 
+  logout (event) {
+    event.preventDefault();
+    fetch('http://localhost:8000/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+        .then(response => {
+            if(response.status >= 200 && response.status < 300) {
+                console.log("SUCCESSFULLY LOGGED OUT!");
+            }
+        });
+  }
+  
   render() {
     return (
       <div className="App">

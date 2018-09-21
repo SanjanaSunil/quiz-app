@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Redirect from 'react-router-dom/Redirect';
-import App from '../App';
 
 class SignUp extends Component {
   constructor() {
@@ -22,11 +21,18 @@ class SignUp extends Component {
     event.preventDefault();
     fetch('http://localhost:8000/signup', {
         method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(this.state.formData),
     })
       .then(response => {
             if(response.status >= 200 && response.status < 300)
+            {
                 this.setState({submitted: true});
+                window.location = 'http://localhost:3000'
+            }
       });
   }
 
@@ -38,9 +44,6 @@ class SignUp extends Component {
   }
 
   render() {
-    if(this.state.submitted) {
-      return <Redirect to='/' component={App}/>;
-    }
     return (
       <div className="App">
         <div className="container">

@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"log"
 	"encoding/json"
-	"github.com/gorilla/handlers"
+	// "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/gorilla/securecookie"
+	"github.com/gorilla/sessions"
 	"net/http"
+	"github.com/rs/cors"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite" 
 )
@@ -15,32 +16,19 @@ import (
 var db *gorm.DB
 var err error
 
-var cookieHandler = securecookie.New(
-	securecookie.GenerateRandomKey(64),
-	securecookie.GenerateRandomKey(32))
+var (
+	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
+	key = []byte("super-secret-key")
+	store = sessions.NewCookieStore(key)
+)
 
-func setSession(userName string, response http.ResponseWriter) {
-	value := map[string]string{
-		"Username": userName,
+func Authenticate(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "cookie-name")
+	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+		respondError(w, http.StatusForbidden, "Forbidden")
+		return
 	}
-	if encoded, err := cookieHandler.Encode("session", value); err == nil {
-		cookie := &http.Cookie{
-			Name:  "session",
-			Value: encoded,
-			Path:  "/",
-		}
-		http.SetCookie(response, cookie)
-	}
-}
-
-func clearSession(response http.ResponseWriter) {
-	cookie := &http.Cookie{
-		Name:   "session",
-		Value:  "",
-		Path:   "/",
-		MaxAge: -1,
-	}
-	http.SetCookie(response, cookie)
+	respondJSON(w, http.StatusOK, session.Values["user"])
 }
 
 // ---------------------------------------------------------------
@@ -65,17 +53,20 @@ var router = mux.NewRouter()
 	db.AutoMigrate(&User{})
 
 	router.HandleFunc("/users", GetUsers)
+	router.HandleFunc("/user", Authenticate)
 	router.HandleFunc("/user/{id}", GetUser)
-	router.HandleFunc("/user", GetUserName)
 	router.HandleFunc("/user/{id}", DeleteUser).Methods("DELETE")
 	router.HandleFunc("/signup", SignUp).Methods("POST")
 	router.HandleFunc("/signin", SignIn).Methods("POST")
 	router.HandleFunc("/logout", Logout).Methods("POST")
 
-	corsObj := handlers.AllowedOrigins([]string{"*"})
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:3000"},
+		AllowCredentials: true,
+	})
 
 	http.Handle("/", router)
-	log.Fatal(http.ListenAndServe(":8000", handlers.CORS(corsObj)(router)))
+	log.Fatal(http.ListenAndServe(":8000", c.Handler(router)))
 }
 
 // ----------------------------------------------------
@@ -99,17 +90,6 @@ func respondError(w http.ResponseWriter, code int, message string) {
 }
 
 // ---------------------------------------------
-
-func GetUserName(response http.ResponseWriter, request *http.Request) {
-	var userName string
-	if cookie, err := request.Cookie("session"); err == nil {
-		cookieValue := make(map[string]string)
-		if err = cookieHandler.Decode("session", cookie.Value, &cookieValue); err == nil {
-			userName = cookieValue["Username"]
-		}
-	}
-	respondJSON(response, http.StatusOK, userName)
-}	
 
 func GetUser(response http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
@@ -150,6 +130,7 @@ func DeleteUser(response http.ResponseWriter, request *http.Request) {
 }
 
 func SignUp(response http.ResponseWriter, request *http.Request) {
+	session, _ := store.Get(request, "cookie-name")
 	var user User
 	decoder := json.NewDecoder(request.Body)
 	if err := decoder.Decode(&user); err != nil {
@@ -157,17 +138,19 @@ func SignUp(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 	defer request.Body.Close()
- 
+ 	
 	if err := db.Save(&user).Error; err != nil {
-		fmt.Println("WHY IS THIS HAPPENING %s", user)
 		respondError(response, http.StatusInternalServerError, err.Error())
 		return
 	}
-	setSession(user.Username, response)
-	respondJSON(response, http.StatusCreated, user)
+	respondJSON(response, http.StatusOK, user)
+	session.Values["authenticated"] = true
+	session.Values["user"] = user.Username
+	session.Save(request, response)
 }
 
 func SignIn(response http.ResponseWriter, request *http.Request) {
+	session, _ := store.Get(request, "cookie-name")
 	var user User
 	decoder := json.NewDecoder(request.Body)
 	if err := decoder.Decode(&user); err != nil {
@@ -180,11 +163,19 @@ func SignIn(response http.ResponseWriter, request *http.Request) {
 		respondError(response, http.StatusNotFound, err.Error())
 		fmt.Println(err)
    	} else {
-		setSession(user.Username, response)
-	   	respondJSON(response, http.StatusOK, user)
+		session.Values["authenticated"] = true
+		session.Values["user"] = user.Username
+		session.Save(request, response)
+		respondJSON(response, http.StatusOK, user)
 	}
 }
 
 func Logout(response http.ResponseWriter, request *http.Request) {
-	clearSession(response)
+	session, _ := store.Get(request, "cookie-name")
+
+	session.Options = &sessions.Options{
+		MaxAge:	-1,
+		HttpOnly: true,
+	}
+	session.Save(request, response)
 }

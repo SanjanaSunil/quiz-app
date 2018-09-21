@@ -10,8 +10,13 @@ class App extends Component {
     }
   }
   componentDidMount() {
-    const request = new Request('http://127.0.0.1:8000/user');
-    fetch(request)
+    fetch('http://localhost:8000/user', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
       .then(response => {
         if(response.status === 200)
                 this.setState({loggedIn: true});
