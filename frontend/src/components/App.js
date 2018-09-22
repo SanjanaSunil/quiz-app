@@ -19,8 +19,8 @@ class App extends Component {
     })
       .then(response => {
         if(response.status === 200)
-                this.setState({loggedIn: true});
-                console.log(response);
+          this.setState({loggedIn: true});
+          console.log(response);
       });
   }
   render() {

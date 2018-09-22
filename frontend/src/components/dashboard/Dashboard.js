@@ -4,8 +4,7 @@ class Dashboard extends Component {
   constructor() {
     super();
     this.state = {
-      data: [],
-      user: [],
+      data: []
     }
     this.logout = this.logout.bind(this);
   }
@@ -18,10 +17,12 @@ class Dashboard extends Component {
             'Content-Type': 'application/json'
         },
     })
-      .then(response => {
-        if(response.status === 200)
-          console.log(response);
-      });
+      .then(response =>
+        //if(response.status === 200)
+          // console.log(response.status);
+          response.json())
+      .then(data => this.setState({data: data}));
+
   }
 
   logout (event) {
@@ -45,11 +46,12 @@ class Dashboard extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">Welcome to Qureka</h1>
+          <h1 className="App-title">Welcome to Qureka {this.state.data.username}</h1>
         </header>
         <div className="container">
           <span className="pull-right"><button onClick={this.logout} className="btn btn-primary btn-lg btn-login btn-block">Log out</button></span>
         </div>
+        <h1>{this.state.data.username}</h1>
       </div>
     );
   }

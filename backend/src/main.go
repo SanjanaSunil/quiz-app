@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"encoding/json"
-	// "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"net/http"
@@ -17,7 +16,6 @@ var db *gorm.DB
 var err error
 
 var (
-	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
 	key = []byte("super-secret-key")
 	store = sessions.NewCookieStore(key)
 )
@@ -28,7 +26,11 @@ func Authenticate(w http.ResponseWriter, r *http.Request) {
 		respondError(w, http.StatusForbidden, "Forbidden")
 		return
 	}
-	respondJSON(w, http.StatusOK, session.Values["user"])
+	if str, ok := session.Values["user"].(string); ok {
+		respondJSON(w, http.StatusOK, map[string]string{"username": str})
+	} else {
+		respondError(w, http.StatusNotFound, err.Error())
+	}
 }
 
 // ---------------------------------------------------------------
@@ -71,7 +73,6 @@ var router = mux.NewRouter()
 
 // ----------------------------------------------------
 
-// respondJSON makes the response with payload as json format
 func respondJSON(w http.ResponseWriter, status int, payload interface{}) {
 	response, err := json.Marshal(payload)
 	if err != nil {
