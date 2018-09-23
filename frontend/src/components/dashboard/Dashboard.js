@@ -69,7 +69,7 @@ class Dashboard extends Component {
                   <div className="navbar-header">
                   </div>
                   <ul className="nav navbar-nav">
-                    {this.state.admin.type=="admin" && 
+                    {this.state.admin.type==="admin" && 
                       <li><Link to={'/ViewUsers'}>View Users</Link></li>
                     }
                   </ul>
@@ -78,7 +78,7 @@ class Dashboard extends Component {
                   </ul>
                 </div>
               </nav>
-              {this.state.admin.type=="admin" && 
+              {this.state.admin.type==="admin" && 
                 <Switch>
                   <Route exact path='/ViewUsers' component={ViewUsers} />
                 </Switch>
