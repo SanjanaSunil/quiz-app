@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"encoding/json"
+	handler "./api/app/handler"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"net/http"
@@ -23,13 +24,13 @@ var (
 func Authenticate(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie-name")
 	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
-		respondError(w, http.StatusForbidden, "Forbidden")
+		handler.ErrorResponse(w, http.StatusForbidden, "Forbidden")
 		return
 	}
 	if str, ok := session.Values["user"].(string); ok {
-		respondJSON(w, http.StatusOK, map[string]string{"username": str})
+		handler.JSONResponse(w, http.StatusOK, map[string]string{"username": str})
 	} else {
-		respondError(w, http.StatusNotFound, err.Error())
+		handler.ErrorResponse(w, http.StatusNotFound, err.Error())
 	}
 }
 
@@ -71,46 +72,25 @@ var router = mux.NewRouter()
 	log.Fatal(http.ListenAndServe(":8000", c.Handler(router)))
 }
 
-// ----------------------------------------------------
-
-func respondJSON(w http.ResponseWriter, status int, payload interface{}) {
-	response, err := json.Marshal(payload)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	w.Write([]byte(response))
-}
- 
-// respondError makes the error response with payload as json format
-func respondError(w http.ResponseWriter, code int, message string) {
-	respondJSON(w, code, map[string]string{"error": message})
-}
-
-// ---------------------------------------------
-
 func GetUser(response http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
 	id := vars["id"]
 	var user User
 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
-	 	respondError(response, http.StatusNotFound, err.Error())
+		handler.ErrorResponse(response, http.StatusNotFound, err.Error())
 	 	fmt.Println(err)
 	} else {
-		respondJSON(response, http.StatusOK, user)
+		handler.JSONResponse(response, http.StatusOK, user)
   	}
 }
  
 func GetUsers(response http.ResponseWriter, request *http.Request) {
 	var users []User
 	if err := db.Find(&users).Error; err != nil {
-		respondError(response, http.StatusNotFound, err.Error())
+		handler.ErrorResponse(response, http.StatusNotFound, err.Error())
 		fmt.Println(err)
   	} else {
-		respondJSON(response, http.StatusOK, users)
+		handler.JSONResponse(response, http.StatusOK, users)
 	}
 }
 
@@ -119,15 +99,15 @@ func DeleteUser(response http.ResponseWriter, request *http.Request) {
 	id := vars["id"]
 	var user User
 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
-		respondError(response, http.StatusNotFound, err.Error())
+		handler.ErrorResponse(response, http.StatusNotFound, err.Error())
 		fmt.Println(err)
    	}
    	if err := db.Delete(&user).Error; err != nil {
-		respondError(response, http.StatusInternalServerError, err.Error())
+		handler.ErrorResponse(response, http.StatusInternalServerError, err.Error())
 		fmt.Println(err)
 		return
 	}
-	respondJSON(response, http.StatusNoContent, nil)
+	handler.JSONResponse(response, http.StatusNoContent, nil)
 }
 
 func SignUp(response http.ResponseWriter, request *http.Request) {
@@ -135,19 +115,19 @@ func SignUp(response http.ResponseWriter, request *http.Request) {
 	var user User
 	decoder := json.NewDecoder(request.Body)
 	if err := decoder.Decode(&user); err != nil {
-		respondError(response, http.StatusBadRequest, err.Error())
+		handler.ErrorResponse(response, http.StatusBadRequest, err.Error())
 		return
 	}
 	defer request.Body.Close()
  	
 	if err := db.Save(&user).Error; err != nil {
-		respondError(response, http.StatusInternalServerError, err.Error())
+		handler.ErrorResponse(response, http.StatusInternalServerError, err.Error())
 		return
 	}
 	session.Values["authenticated"] = true
 	session.Values["user"] = user.Username
 	session.Save(request, response)
-	respondJSON(response, http.StatusOK, user)
+	handler.JSONResponse(response, http.StatusOK, user)
 }
 
 func SignIn(response http.ResponseWriter, request *http.Request) {
@@ -155,19 +135,19 @@ func SignIn(response http.ResponseWriter, request *http.Request) {
 	var user User
 	decoder := json.NewDecoder(request.Body)
 	if err := decoder.Decode(&user); err != nil {
-		respondError(response, http.StatusBadRequest, err.Error())
+		handler.ErrorResponse(response, http.StatusBadRequest, err.Error())
 		return
 	}
 	defer request.Body.Close()
  
 	if err := db.Where("username = ? AND password = ?", user.Username, user.Password).First(&user).Error; err != nil {
-		respondError(response, http.StatusNotFound, err.Error())
+		handler.ErrorResponse(response, http.StatusNotFound, err.Error())
 		fmt.Println(err)
    	} else {
 		session.Values["authenticated"] = true
 		session.Values["user"] = user.Username
 		session.Save(request, response)
-		respondJSON(response, http.StatusOK, user)
+		handler.JSONResponse(response, http.StatusOK, user)
 	}
 }
 
