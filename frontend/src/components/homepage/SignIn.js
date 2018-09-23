@@ -25,6 +25,7 @@ class SignIn extends Component {
         })
             .then(response => {
                 if(response.status >= 200 && response.status < 300) {
+                    this.setState({userExists: true});
                     window.location = 'http://localhost:3000'
                 }
                 else {
@@ -48,7 +49,7 @@ class SignIn extends Component {
             <p><b>Login</b></p>
             { !(this.state.userExists) && 
               <div className="alert alert-danger">
-                User does not exist
+                Incorrect username or password
               </div>
             }
             <div className="formContainer">
