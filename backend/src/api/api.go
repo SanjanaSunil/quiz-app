@@ -19,14 +19,14 @@ var router = mux.NewRouter()
 
 func Run() {
 
-	db, err = gorm.Open("sqlite3", "./gorm.db")
+	db, err = gorm.Open("sqlite3", "./database/gorm.db")
 
 	if err != nil {
 		fmt.Println(err)
 	}
 	defer db.Close()
 	  
-	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.User{}, &model.Quiz{})
 
 	router.HandleFunc("/users", GetUsers).Methods("GET")
 	router.HandleFunc("/user", Authenticate).Methods("GET")
@@ -37,11 +37,13 @@ func Run() {
 	router.HandleFunc("/signin", SignIn).Methods("POST")
 	router.HandleFunc("/logout", Logout).Methods("POST")
 
+	router.HandleFunc("/genres", GetQuizGenres).Methods("GET")
+
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"http://localhost:3000"},
 		// AllowedHeaders: []string{"Content-Type"},
 		AllowCredentials: true,
-		AllowedMethods: []string{"GET", "HEAD", "POST", "PUT", "DELETE"},
+		AllowedMethods: []string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"},
 		Debug: true,
 	})
 
@@ -79,4 +81,8 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 
 func Logout(w http.ResponseWriter, r *http.Request) {
 	controller.Logout(db, w, r)
+}
+
+func GetQuizGenres(w http.ResponseWriter, r *http.Request) {
+	controller.GetQuizGenres(db, w, r)
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ViewUsers from './ViewUsers';
+import ViewQuizzes from './ViewQuizzes';
 
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
@@ -72,17 +73,19 @@ class Dashboard extends Component {
                     {this.state.admin.type==="admin" && 
                       <li><Link to={'/ViewUsers'}>View Users</Link></li>
                     }
+                    <li><Link to={'/ViewQuizzes'}>Quizzes</Link></li>
                   </ul>
                   <ul className="nav navbar-nav navbar-right">
                     <li><button onClick={this.logout} className="btn btn-danger btn-lg btn-login btn-block">Log out</button></li>
                   </ul>
                 </div>
               </nav>
-              {this.state.admin.type==="admin" && 
-                <Switch>
-                  <Route exact path='/ViewUsers' component={ViewUsers} />
-                </Switch>
-              }
+              <Switch>
+                {this.state.admin.type==="admin" && 
+                    <Route exact path='/ViewUsers' component={ViewUsers} />
+                }
+                <Route exact path='/ViewQuizzes' component={ViewQuizzes} />
+              </Switch>
             </div>
           </Router>
         </div>
