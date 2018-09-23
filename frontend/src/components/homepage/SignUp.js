@@ -4,8 +4,10 @@ class SignUp extends Component {
   constructor() {
     super();
     this.state = {
-      username: "",
-      password: "",
+      formData: {
+        username: "",
+        password: "",
+      },
     }
     this.handleUChange = this.handleUChange.bind(this);
     this.handlePChange = this.handlePChange.bind(this);
@@ -20,20 +22,20 @@ class SignUp extends Component {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(this.state),
+        body: JSON.stringify(this.state.formData),
     })
       .then(response => {
-            if(response.status >= 200 && response.status < 300) {
-                window.location = 'http://localhost:3000'
-            }
+          if(response.status >= 200 && response.status < 300) {
+              window.location = 'http://localhost:3000'
+          }
       });
   }
 
   handleUChange(event) {
-    this.setState({username: event.target.value});
+    this.setState({formData: {username: event.target.value}});
   }
   handlePChange(event) {
-    this.setState({password: event.target.value});
+    this.setState({formData: {password: event.target.value}});
   }
 
   render() {
@@ -46,11 +48,11 @@ class SignUp extends Component {
                 <form onSubmit={this.handleSubmit}>
                 <div className="form-group">
                     <label>Username</label>
-                    <input type="text" className="form-control" value={this.state.username} onChange={this.handleUChange}/>
+                    <input type="text" className="form-control" value={this.state.formData.username} onChange={this.handleUChange}/>
                 </div>
                 <div className="form-group">
                     <label>Password</label>
-                    <input type="password" className="form-control" value={this.state.password} onChange={this.handlePChange}/>
+                    <input type="password" className="form-control" value={this.state.formData.password} onChange={this.handlePChange}/>
                 </div>
                     <br></br>
                     <button type="submit" className="btn btn-primary btn-lg btn-login btn-block">Sign Up</button>
