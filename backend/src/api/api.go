@@ -30,6 +30,7 @@ func Run() {
 
 	router.HandleFunc("/users", GetUsers)
 	router.HandleFunc("/user", Authenticate)
+	router.HandleFunc("/type", GetUserType)
 	router.HandleFunc("/user/{id}", GetUser)
 	router.HandleFunc("/user/{id}", DeleteUser).Methods("DELETE")
 	router.HandleFunc("/signup", SignUp).Methods("POST")
@@ -47,6 +48,10 @@ func Run() {
 
 func Authenticate(w http.ResponseWriter, r *http.Request) {
 	controller.Authenticate(db, w, r)
+}
+
+func GetUserType(w http.ResponseWriter, r *http.Request) {
+	controller.GetUserType(db, w, r)
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {

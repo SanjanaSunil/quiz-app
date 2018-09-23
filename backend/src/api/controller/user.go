@@ -31,6 +31,19 @@ func Authenticate(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func GetUserType(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "cookie-name")
+	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+		ErrorResponse(w, http.StatusForbidden, "Forbidden")
+		return
+	}
+	if str, ok := session.Values["type"].(string); ok {
+		JSONResponse(w, http.StatusOK, map[string]string{"type": str})
+	} else {
+		ErrorResponse(w, http.StatusNotFound, err.Error())
+	}
+}
+
 func GetUser(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
 	id := vars["id"]
@@ -85,6 +98,7 @@ func SignUp(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
 	}
 	session.Values["authenticated"] = true
 	session.Values["user"] = user.Username
+	session.Values["type"] = user.Type
 	session.Save(request, response)
 	JSONResponse(response, http.StatusOK, user)
 }
@@ -105,6 +119,7 @@ func SignIn(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
    	} else {
 		session.Values["authenticated"] = true
 		session.Values["user"] = user.Username
+		session.Values["type"] = user.Type
 		session.Save(request, response)
 		JSONResponse(response, http.StatusOK, user)
 	}
