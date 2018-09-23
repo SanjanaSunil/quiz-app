@@ -38,6 +38,8 @@ func Run() {
 	router.HandleFunc("/logout", Logout).Methods("POST")
 
 	router.HandleFunc("/genres", GetQuizGenres).Methods("GET")
+	router.HandleFunc("/create/genre", CreateQuizGenre).Methods("POST")
+	router.HandleFunc("/question", CreateQuizQuestion).Methods("POST")
 
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"http://localhost:3000"},
@@ -85,4 +87,12 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 func GetQuizGenres(w http.ResponseWriter, r *http.Request) {
 	controller.GetQuizGenres(db, w, r)
+}
+
+func CreateQuizGenre(w http.ResponseWriter, r *http.Request) {
+	controller.CreateQuizGenre(db, w, r)
+}
+
+func CreateQuizQuestion(w http.ResponseWriter, r *http.Request) {
+	controller.CreateQuizQuestion(db, w, r)
 }
