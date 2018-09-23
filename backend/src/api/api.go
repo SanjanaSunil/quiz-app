@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"encoding/json"
-	handler "./handler"
+	controller "./controller"
 	model "./model"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -55,13 +55,13 @@ func Run() {
 func Authenticate(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie-name")
 	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
-		handler.ErrorResponse(w, http.StatusForbidden, "Forbidden")
+		controller.ErrorResponse(w, http.StatusForbidden, "Forbidden")
 		return
 	}
 	if str, ok := session.Values["user"].(string); ok {
-		handler.JSONResponse(w, http.StatusOK, map[string]string{"username": str})
+		controller.JSONResponse(w, http.StatusOK, map[string]string{"username": str})
 	} else {
-		handler.ErrorResponse(w, http.StatusNotFound, err.Error())
+		controller.ErrorResponse(w, http.StatusNotFound, err.Error())
 	}
 }
 
@@ -70,20 +70,20 @@ func GetUser(response http.ResponseWriter, request *http.Request) {
 	id := vars["id"]
 	var user model.User
 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
-		handler.ErrorResponse(response, http.StatusNotFound, err.Error())
+		controller.ErrorResponse(response, http.StatusNotFound, err.Error())
 	 	fmt.Println(err)
 	} else {
-		handler.JSONResponse(response, http.StatusOK, user)
+		controller.JSONResponse(response, http.StatusOK, user)
   	}
 }
  
 func GetUsers(response http.ResponseWriter, request *http.Request) {
 	var users []model.User
 	if err := db.Find(&users).Error; err != nil {
-		handler.ErrorResponse(response, http.StatusNotFound, err.Error())
+		controller.ErrorResponse(response, http.StatusNotFound, err.Error())
 		fmt.Println(err)
   	} else {
-		handler.JSONResponse(response, http.StatusOK, users)
+		controller.JSONResponse(response, http.StatusOK, users)
 	}
 }
 
@@ -92,15 +92,15 @@ func DeleteUser(response http.ResponseWriter, request *http.Request) {
 	id := vars["id"]
 	var user model.User
 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
-		handler.ErrorResponse(response, http.StatusNotFound, err.Error())
+		controller.ErrorResponse(response, http.StatusNotFound, err.Error())
 		fmt.Println(err)
    	}
    	if err := db.Delete(&user).Error; err != nil {
-		handler.ErrorResponse(response, http.StatusInternalServerError, err.Error())
+		controller.ErrorResponse(response, http.StatusInternalServerError, err.Error())
 		fmt.Println(err)
 		return
 	}
-	handler.JSONResponse(response, http.StatusNoContent, nil)
+	controller.JSONResponse(response, http.StatusNoContent, nil)
 }
 
 func SignUp(response http.ResponseWriter, request *http.Request) {
@@ -108,19 +108,19 @@ func SignUp(response http.ResponseWriter, request *http.Request) {
 	var user model.User
 	decoder := json.NewDecoder(request.Body)
 	if err := decoder.Decode(&user); err != nil {
-		handler.ErrorResponse(response, http.StatusBadRequest, err.Error())
+		controller.ErrorResponse(response, http.StatusBadRequest, err.Error())
 		return
 	}
 	defer request.Body.Close()
  	
 	if err := db.Save(&user).Error; err != nil {
-		handler.ErrorResponse(response, http.StatusInternalServerError, err.Error())
+		controller.ErrorResponse(response, http.StatusInternalServerError, err.Error())
 		return
 	}
 	session.Values["authenticated"] = true
 	session.Values["user"] = user.Username
 	session.Save(request, response)
-	handler.JSONResponse(response, http.StatusOK, user)
+	controller.JSONResponse(response, http.StatusOK, user)
 }
 
 func SignIn(response http.ResponseWriter, request *http.Request) {
@@ -128,19 +128,19 @@ func SignIn(response http.ResponseWriter, request *http.Request) {
 	var user model.User
 	decoder := json.NewDecoder(request.Body)
 	if err := decoder.Decode(&user); err != nil {
-		handler.ErrorResponse(response, http.StatusBadRequest, err.Error())
+		controller.ErrorResponse(response, http.StatusBadRequest, err.Error())
 		return
 	}
 	defer request.Body.Close()
  
 	if err := db.Where("username = ? AND password = ?", user.Username, user.Password).First(&user).Error; err != nil {
-		handler.ErrorResponse(response, http.StatusNotFound, err.Error())
+		controller.ErrorResponse(response, http.StatusNotFound, err.Error())
 		fmt.Println(err)
    	} else {
 		session.Values["authenticated"] = true
 		session.Values["user"] = user.Username
 		session.Save(request, response)
-		handler.JSONResponse(response, http.StatusOK, user)
+		controller.JSONResponse(response, http.StatusOK, user)
 	}
 }
 
