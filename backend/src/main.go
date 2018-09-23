@@ -6,6 +6,6 @@ import(
 )
 
 func main() {
-	fmt.Printf("Initializing")
+	fmt.Printf("Initializing...\n")
 	app.Run()
 }

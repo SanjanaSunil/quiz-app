@@ -5,6 +5,7 @@ import (
 	"log"
 	"encoding/json"
 	handler "./handler"
+	model "./model"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"net/http"
@@ -21,15 +22,9 @@ var (
 	store = sessions.NewCookieStore(key)
 )
 
-type User struct {
-	ID uint `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
 var router = mux.NewRouter()
 
- func Run() {
+func Run() {
 
 	db, err = gorm.Open("sqlite3", "./gorm.db")
 
@@ -38,7 +33,7 @@ var router = mux.NewRouter()
 	}
 	defer db.Close()
 	  
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&model.User{})
 
 	router.HandleFunc("/users", GetUsers)
 	router.HandleFunc("/user", Authenticate)
@@ -73,7 +68,7 @@ func Authenticate(w http.ResponseWriter, r *http.Request) {
 func GetUser(response http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
 	id := vars["id"]
-	var user User
+	var user model.User
 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
 		handler.ErrorResponse(response, http.StatusNotFound, err.Error())
 	 	fmt.Println(err)
@@ -83,7 +78,7 @@ func GetUser(response http.ResponseWriter, request *http.Request) {
 }
  
 func GetUsers(response http.ResponseWriter, request *http.Request) {
-	var users []User
+	var users []model.User
 	if err := db.Find(&users).Error; err != nil {
 		handler.ErrorResponse(response, http.StatusNotFound, err.Error())
 		fmt.Println(err)
@@ -95,7 +90,7 @@ func GetUsers(response http.ResponseWriter, request *http.Request) {
 func DeleteUser(response http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
 	id := vars["id"]
-	var user User
+	var user model.User
 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
 		handler.ErrorResponse(response, http.StatusNotFound, err.Error())
 		fmt.Println(err)
@@ -110,7 +105,7 @@ func DeleteUser(response http.ResponseWriter, request *http.Request) {
 
 func SignUp(response http.ResponseWriter, request *http.Request) {
 	session, _ := store.Get(request, "cookie-name")
-	var user User
+	var user model.User
 	decoder := json.NewDecoder(request.Body)
 	if err := decoder.Decode(&user); err != nil {
 		handler.ErrorResponse(response, http.StatusBadRequest, err.Error())
@@ -130,7 +125,7 @@ func SignUp(response http.ResponseWriter, request *http.Request) {
 
 func SignIn(response http.ResponseWriter, request *http.Request) {
 	session, _ := store.Get(request, "cookie-name")
-	var user User
+	var user model.User
 	decoder := json.NewDecoder(request.Body)
 	if err := decoder.Decode(&user); err != nil {
 		handler.ErrorResponse(response, http.StatusBadRequest, err.Error())
