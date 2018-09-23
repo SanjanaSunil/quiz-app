@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import ViewUsers from './ViewUsers';
+
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
 class Dashboard extends Component {
   constructor() {
@@ -36,7 +39,6 @@ class Dashboard extends Component {
     })
         .then(response => {
             if(response.status >= 200 && response.status < 300) {
-                console.log("SUCCESSFULLY LOGGED OUT!");
                 window.location = 'http://localhost:3000'
             }
         });
@@ -48,10 +50,27 @@ class Dashboard extends Component {
         <header className="App-header">
           <h1 className="App-title">Welcome to Qureka {this.state.data.username}</h1>
         </header>
-        <div className="container">
-          <span className="pull-right"><button onClick={this.logout} className="btn btn-primary btn-lg btn-login btn-block">Log out</button></span>
+        <div>
+          <Router>
+            <div>
+              <nav className="navbar navbar-default">
+                <div className="container-fluid">
+                  <div className="navbar-header">
+                  </div>
+                  <ul className="nav navbar-nav">
+                    <li><Link to={'/ViewUsers'}>View Users</Link></li>
+                  </ul>
+                  <ul class="nav navbar-nav navbar-right">
+                    <li><button onClick={this.logout} className="btn btn-danger btn-lg btn-login btn-block">Log out</button></li>
+                  </ul>
+                </div>
+              </nav>
+              <Switch>
+                  <Route exact path='/ViewUsers' component={ViewUsers} />
+              </Switch>
+            </div>
+          </Router>
         </div>
-        <h1>{this.state.data.username}</h1>
       </div>
     );
   }
