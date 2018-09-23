@@ -60,7 +60,7 @@ class Dashboard extends Component {
                   <ul className="nav navbar-nav">
                     <li><Link to={'/ViewUsers'}>View Users</Link></li>
                   </ul>
-                  <ul class="nav navbar-nav navbar-right">
+                  <ul className="nav navbar-nav navbar-right">
                     <li><button onClick={this.logout} className="btn btn-danger btn-lg btn-login btn-block">Log out</button></li>
                   </ul>
                 </div>

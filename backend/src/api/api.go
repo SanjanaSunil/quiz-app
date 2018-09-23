@@ -28,10 +28,10 @@ func Run() {
 	  
 	db.AutoMigrate(&model.User{})
 
-	router.HandleFunc("/users", GetUsers)
-	router.HandleFunc("/user", Authenticate)
-	router.HandleFunc("/type", GetUserType)
-	router.HandleFunc("/user/{id}", GetUser)
+	router.HandleFunc("/users", GetUsers).Methods("GET")
+	router.HandleFunc("/user", Authenticate).Methods("GET")
+	router.HandleFunc("/type", GetUserType).Methods("GET")
+	router.HandleFunc("/user/{id}", GetUser).Methods("GET")
 	router.HandleFunc("/user/{id}", DeleteUser).Methods("DELETE")
 	router.HandleFunc("/signup", SignUp).Methods("POST")
 	router.HandleFunc("/signin", SignIn).Methods("POST")
@@ -39,7 +39,10 @@ func Run() {
 
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"http://localhost:3000"},
+		// AllowedHeaders: []string{"Content-Type"},
 		AllowCredentials: true,
+		AllowedMethods: []string{"GET", "HEAD", "POST", "PUT", "DELETE"},
+		Debug: true,
 	})
 
 	http.Handle("/", router)

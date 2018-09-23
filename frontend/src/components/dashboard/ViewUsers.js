@@ -5,9 +5,30 @@ class ViewUsers extends Component {
   constructor() {
     super();
     this.state = {
-      data: []
+      data: [],
+      deleteId: "",
     }
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleRChange = this.handleRChange.bind(this);
   }
+
+  handleRChange(event) {
+    this.setState({deleteId: event.target.value});
+  }
+
+  handleSubmit (event) {
+    event.preventDefault();
+    fetch('http://localhost:8000/user/' + this.state.deleteId, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(this.state.deleteId),
+    })
+      .then(response => this.setState({deleteId: ""}));
+          window.location.reload();
+ }
 
   componentDidMount() {
     fetch('http://localhost:8000/users', {
@@ -27,25 +48,31 @@ class ViewUsers extends Component {
     return (
       <div className="App">
 
+        <form onSubmit={this.handleSubmit}>
         <table className="table-hover">
           <thead>
             <tr>
               <th>ID</th>
               <th>Username</th>
               <th>Type</th>
+              <th>Delete</th>
             </tr>
           </thead>
-          <tbody>{this.state.data.map(function(item, key) {
+          <tbody>{this.state.data.map((item, key)=> {
                return (
                   <tr key = {key}>
                       <td>{item.id}</td>
                       <td>{item.username}</td>
                       <td>{item.type}</td>
+                      <td><input type="radio" name="radioInput" value={item.id} onChange={this.handleRChange}/></td>
                   </tr>
                 )
              })}
           </tbody>
        </table>
+       <br></br>
+        <button type="submit" className="btn btn-default">Delete</button>
+       </form>
       </div>
     );
   }

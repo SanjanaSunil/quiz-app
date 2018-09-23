@@ -73,7 +73,7 @@ func DeleteUser(db *gorm.DB, response http.ResponseWriter, request *http.Request
 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
 		ErrorResponse(response, http.StatusNotFound, err.Error())
 		fmt.Println(err)
-   	}
+	} 
    	if err := db.Delete(&user).Error; err != nil {
 		ErrorResponse(response, http.StatusInternalServerError, err.Error())
 		fmt.Println(err)
