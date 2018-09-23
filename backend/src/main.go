@@ -160,7 +160,7 @@ func SignIn(response http.ResponseWriter, request *http.Request) {
 	}
 	defer request.Body.Close()
  
-	if err := db.Where("username = ?", user.Username).First(&user).Error; err != nil {
+	if err := db.Where("username = ? AND password = ?", user.Username, user.Password).First(&user).Error; err != nil {
 		respondError(response, http.StatusNotFound, err.Error())
 		fmt.Println(err)
    	} else {
