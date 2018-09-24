@@ -8,7 +8,7 @@ class ViewQuizzes extends Component {
     this.state = {
       data: [],
       admin: [],
-      genre_id: "",
+      genre_id: 0,
       quiz: [],
       clicked: false
     }

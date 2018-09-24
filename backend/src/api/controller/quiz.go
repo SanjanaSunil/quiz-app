@@ -50,7 +50,7 @@ func CreateQuizGenre(db *gorm.DB, response http.ResponseWriter, request *http.Re
 }
 
 func CreateQuizQuestion(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
-	var question []model.Question
+	var question model.Question
 	decoder := json.NewDecoder(request.Body)
 	if err := decoder.Decode(&question); err != nil {
 		ErrorResponse(response, http.StatusBadRequest, err.Error())
