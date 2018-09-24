@@ -6,11 +6,12 @@ class EditQuiz extends Component {
     this.state = {
       genre_id: parseInt(this.props.genre_id, 10),
       question: "",
-      data: []
+      data: [],
     }
     this.return = this.return.bind(this);
     this.handleQChange = this.handleQChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.fetchQuestions = this.fetchQuestions.bind(this);
   }
 
   return(event) {
@@ -19,6 +20,18 @@ class EditQuiz extends Component {
 
   handleQChange(event) {
     this.setState({question: event.target.value});
+  }
+
+  fetchQuestions(event) {
+    fetch('http://localhost:8000/genre/' + this.props.genre_id, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+    })
+      .then(response => response.json())
+      .then(data => this.setState({data: data}));
   }
 
   handleSubmit(event) {
@@ -34,32 +47,19 @@ class EditQuiz extends Component {
     .then(response => {
       if(response.status >= 200 && response.status < 300) {
           this.setState({question: ""});
-          window.location.reload();
+          this.fetchQuestions();
       }
 
   });
   }
 
   componentDidMount() {
-    fetch('http://localhost:8000/genre/' + this.props.genre_id, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-    })
-      .then(response => response.json())
-      .then(data => this.setState({data: data}));
+    this.fetchQuestions();
   }
 
   render() {
     return (
       <div className="App">
-        <div>{this.state.data.map((item, key)=> {
-            return (
-               <p key = {key}>{item.question}</p>
-             )
-          })}</div>
           <div className="container">
             <div className="col-xs-8 col-xs-offset-2 jumbotron text-center">
           <div className="formContainer">
@@ -74,7 +74,13 @@ class EditQuiz extends Component {
           </div>
           </div></div>
 
-          <button type="submit" className="btn btn-primary btn-sm" onClick={this.return}>Back</button>
+          <button type="submit" className="btn btn-success btn-sm" onClick={this.return}>Back</button>
+
+          <div>{this.state.data.map((item, key)=> {
+            return (
+               <p key = {key}>{key+1}) {item.question}</p>
+             )
+          })}</div>
 
       </div>
     );
