@@ -74,7 +74,7 @@ class EditQuiz extends Component {
           </div>
           </div></div>
 
-          <button type="submit" className="btn btn-success btn-sm" onClick={this.return}>Back</button>
+          <button type="submit" className="btn btn-success btn-lg" onClick={this.return}>Back</button>
 
           <div>{this.state.data.map((item, key)=> {
             return (

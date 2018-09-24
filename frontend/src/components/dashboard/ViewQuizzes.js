@@ -64,7 +64,7 @@ class ViewQuizzes extends Component {
                       <td>{item.id}</td>
                       <td>{item.genre}</td>
                       {this.state.admin.type==="admin" && 
-                        <td><button type="submit" className="btn btn-success btn-sm" onClick={this.editQuiz} value={item.id}>Edit</button></td>
+                        <td><button type="submit" className="btn btn-success btn-md" onClick={this.editQuiz} value={item.id}>Edit</button></td>
                       }
                   </tr>
                 )
