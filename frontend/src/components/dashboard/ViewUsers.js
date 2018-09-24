@@ -59,7 +59,7 @@ class ViewUsers extends Component {
                       <td>{item.id}</td>
                       <td>{item.username}</td>
                       <td>{item.type}</td>
-                      <td>{item.type!="admin" && <input type="radio" name="radioInput" value={item.id} onChange={this.handleRChange}/>}</td>
+                      <td>{item.type!=="admin" && <input type="radio" name="radioInput" value={item.id} onChange={this.handleRChange}/>}</td>
                   </tr>
                 )
              })}
