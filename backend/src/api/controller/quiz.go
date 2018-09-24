@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	model "../model"
+	"github.com/gorilla/mux"
 	"encoding/json"
 	"net/http"
 	"github.com/jinzhu/gorm"
@@ -17,6 +18,21 @@ func GetQuizGenres(db *gorm.DB, response http.ResponseWriter, request *http.Requ
   	} else {
 		JSONResponse(response, http.StatusOK, quizzes)
 	}
+}
+
+func GetGenreQuestions(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	genre_id := vars["genre_id"]
+	var questions []model.Question
+	bytes := []byte(genre_id)
+	json.Unmarshal(bytes, &questions)
+	if err := db.Where("genre_id = ?", genre_id).Find(&questions).Error; err != nil {
+		ErrorResponse(response, http.StatusNotFound, err.Error())
+	 	fmt.Println(err)
+	} else {
+		JSONResponse(response, http.StatusOK, questions)
+  	}
+
 }
 
 func CreateQuizGenre(db *gorm.DB, response http.ResponseWriter, request *http.Request) {

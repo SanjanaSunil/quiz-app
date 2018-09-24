@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
-import './ViewUsers.css'
+import './ViewUsers.css';
+import EditQuiz from './EditQuiz';
 
-class ViewUsers extends Component {
+class ViewQuizzes extends Component {
   constructor() {
     super();
     this.state = {
-      data: []
+      data: [],
+      admin: [],
+      genre_id: "",
+      quiz: [],
+      clicked: false
     }
+    this.editQuiz = this.editQuiz.bind(this);
   }
 
   componentDidMount() {
@@ -17,20 +23,39 @@ class ViewUsers extends Component {
             'Content-Type': 'application/json'
         },
     })
-      .then(response =>
-          response.json())
+      .then(response => response.json())
       .then(data => this.setState({data: data}));
 
+      fetch('http://localhost:8000/type', {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+    })
+      .then(response => response.json())
+      .then(admin => this.setState({admin: admin}));
+  }
+
+  editQuiz(event) {
+    this.setState({genre_id: event.target.value});
+    this.setState({clicked: true});
   }
 
   render() {
     return (
+      <div>
+        {
+          this.state.clicked && <EditQuiz genre_id={this.state.genre_id}/>
+        }
+      {!this.state.clicked &&
       <div className="App">
         <table className="table-hover">
           <thead>
             <tr>
               <th>ID</th>
               <th>Topic</th>
+              {this.state.admin.type==="admin" && <th>Edit</th>}
             </tr>
           </thead>
           <tbody>{this.state.data.map((item, key)=> {
@@ -38,6 +63,9 @@ class ViewUsers extends Component {
                   <tr key = {key}>
                       <td>{item.id}</td>
                       <td>{item.genre}</td>
+                      {this.state.admin.type==="admin" && 
+                        <td><button type="submit" className="btn btn-success btn-sm" onClick={this.editQuiz} value={item.id}>Edit</button></td>
+                      }
                   </tr>
                 )
              })}
@@ -45,8 +73,10 @@ class ViewUsers extends Component {
        </table>
        <br></br>
       </div>
+      }
+      </div>
     );
   }
 }
 
-export default ViewUsers;
+export default ViewQuizzes;
