@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './ViewUsers.css';
 
 class EditQuiz extends Component {
   constructor(props) {
@@ -7,6 +6,11 @@ class EditQuiz extends Component {
     this.state = {
       data: []
     }
+    this.return = this.return.bind(this);
+  }
+
+  return(event) {
+    window.location = 'http://localhost:3000/ViewQuizzes'
   }
 
   componentDidMount() {
@@ -29,6 +33,9 @@ class EditQuiz extends Component {
                <p key = {key}>{item.question}</p>
              )
           })}</div>
+
+          <button type="submit" className="btn btn-primary btn-sm" onClick={this.return}>Back</button>
+
       </div>
     );
   }

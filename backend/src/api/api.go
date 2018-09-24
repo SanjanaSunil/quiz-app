@@ -32,7 +32,7 @@ func Run() {
 	router.HandleFunc("/user", Authenticate).Methods("GET")
 	router.HandleFunc("/type", GetUserType).Methods("GET")
 	router.HandleFunc("/user/{id}", GetUser).Methods("GET")
-	router.HandleFunc("/user/{id}", DeleteUser).Methods("DELETE")
+	router.HandleFunc("/user/{id}", DeleteUser).Methods("POST")
 	router.HandleFunc("/signup", SignUp).Methods("POST")
 	router.HandleFunc("/signin", SignIn).Methods("POST")
 	router.HandleFunc("/logout", Logout).Methods("POST")

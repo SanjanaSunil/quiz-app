@@ -69,16 +69,13 @@ func GetUsers(db *gorm.DB, response http.ResponseWriter, request *http.Request) 
 func DeleteUser(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
 	id := vars["id"]
-	var user model.User
-	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
-		ErrorResponse(response, http.StatusNotFound, err.Error())
-		fmt.Println(err)
-	} 
-   	if err := db.Delete(&user).Error; err != nil {
+	var users []model.User
+	bytes := []byte(id)
+	json.Unmarshal(bytes, &users)
+	if err := db.Where("id = ?", id).First(&users).Delete(&users).Error; err != nil {
 		ErrorResponse(response, http.StatusInternalServerError, err.Error())
 		fmt.Println(err)
-		return
-	}
+	} 
 	JSONResponse(response, http.StatusNoContent, nil)
 }
 
