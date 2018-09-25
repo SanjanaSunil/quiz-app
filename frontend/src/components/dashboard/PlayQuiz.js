@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import QuizScore from './QuizScore';
 
 class PlayQuiz extends Component {
   constructor(props) {
@@ -11,7 +12,8 @@ class PlayQuiz extends Component {
       answer1: "false",
       answer2: "false",
       answer3: "false",
-      answer4: "false"
+      answer4: "false",
+      end: false
     }
     this.return = this.return.bind(this);
     this.fetchQuestions = this.fetchQuestions.bind(this);
@@ -30,7 +32,7 @@ class PlayQuiz extends Component {
       this.setState({count: temp});
     }
     else {
-      this.return();
+      this.setState({end: true});
     }
 
   }
@@ -78,11 +80,13 @@ class PlayQuiz extends Component {
   render() {
     return (
       <div className="App">
+        <button type="submit" className="btn btn-success btn-lg" onClick={this.return}>Back</button>
 
-          <button type="submit" className="btn btn-success btn-lg" onClick={this.return}>Back</button>
-
+        {this.state.end && <QuizScore count={this.state.count}/>}
+      {!this.state.end && 
+      <div>
           <br />
-
+          <h4>{this.state.count}</h4>
           <div>{this.state.data.map((item, key)=> {
             return (
                <div key = {key}>{ this.state.count===key &&
@@ -101,6 +105,8 @@ class PlayQuiz extends Component {
           })}</div>
 
           <button className="btn btn-primary btn-lg" onClick={this.verify}>Submit</button>
+      </div>
+      }
       </div>
     );
   }
