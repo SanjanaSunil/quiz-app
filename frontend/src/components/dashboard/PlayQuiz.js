@@ -7,11 +7,35 @@ class PlayQuiz extends Component {
       genre_id: parseInt(this.props.genre_id, 10),
       data: [],
       options: [],
-      count: 0
+      count: 0,
+      answer1: "",
+      answer2: "",
+      answer3: "",
+      answer4: ""
     }
     this.return = this.return.bind(this);
     this.fetchQuestions = this.fetchQuestions.bind(this);
     this.fetchOptions = this.fetchOptions.bind(this);
+    this.handleAns = this.handleAns.bind(this);
+    this.verify = this.verify.bind(this);
+  }
+
+  verify() {
+    if(this.state.answer1==="false" || this.state.answer2==="false" || this.state.answer3==="false" || this.state.answer4==="false"){
+      this.return();
+    }
+    else {
+      var temp = this.state.count + 1;
+      this.setState({count: temp});
+    }
+
+  }
+
+  handleAns(key, event) {
+    if(key===0) this.setState({answer1: event.target.value});
+    if(key===1) this.setState({answer2: event.target.value});
+    if(key===2) this.setState({answer3: event.target.value});
+    if(key===3) this.setState({answer4: event.target.value});
   }
 
   return(event) {
@@ -62,6 +86,7 @@ class PlayQuiz extends Component {
                     {this.state.options.map((item, key)=> {
                       return (
                         <ul key = {key}>
+                          <input type="checkbox" name="checkInput" value={item.answer} onChange={(event) =>this.handleAns(key, event)}/>
                           <li>{item.option}</li>
                         </ul>
                       )
@@ -71,6 +96,7 @@ class PlayQuiz extends Component {
              )
           })}</div>
 
+          <button className="btn btn-primary btn-lg" onClick={this.verify}>Submit</button>
       </div>
     );
   }
