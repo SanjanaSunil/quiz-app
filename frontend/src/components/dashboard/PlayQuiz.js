@@ -8,10 +8,10 @@ class PlayQuiz extends Component {
       data: [],
       options: [],
       count: 0,
-      answer1: "",
-      answer2: "",
-      answer3: "",
-      answer4: ""
+      answer1: "false",
+      answer2: "false",
+      answer3: "false",
+      answer4: "false"
     }
     this.return = this.return.bind(this);
     this.fetchQuestions = this.fetchQuestions.bind(this);
@@ -21,12 +21,16 @@ class PlayQuiz extends Component {
   }
 
   verify() {
-    if(this.state.answer1==="false" || this.state.answer2==="false" || this.state.answer3==="false" || this.state.answer4==="false"){
-      this.return();
-    }
-    else {
+    var key1 = document.getElementById("0").value;
+    var key2 = document.getElementById("1").value;
+    var key3 = document.getElementById("2").value;
+    var key4 = document.getElementById("3").value;
+    if(this.state.answer1===key1 && this.state.answer2===key2 && this.state.answer3===key3 && this.state.answer4===key4) {
       var temp = this.state.count + 1;
       this.setState({count: temp});
+    }
+    else {
+      this.return();
     }
 
   }
@@ -86,7 +90,7 @@ class PlayQuiz extends Component {
                     {this.state.options.map((item, key)=> {
                       return (
                         <ul key = {key}>
-                          <input type="checkbox" name="checkInput" value={item.answer} onChange={(event) =>this.handleAns(key, event)}/>
+                          <input type="checkbox" name="checkInput" id={key} value={item.answer} onChange={(event) =>this.handleAns(key, event)}/>
                           <li>{item.option}</li>
                         </ul>
                       )
