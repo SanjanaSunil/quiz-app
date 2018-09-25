@@ -35,6 +35,12 @@ class PlayQuiz extends Component {
     var key2 = document.getElementById("1").value;
     var key3 = document.getElementById("2").value;
     var key4 = document.getElementById("3").value;
+
+    this.setState({answer1: "false"});
+    this.setState({answer2: "false"});
+    this.setState({answer3: "false"});
+    this.setState({answer4: "false"});
+
     if(this.state.answer1===key1 && this.state.answer2===key2 && this.state.answer3===key3 && this.state.answer4===key4) {
       temp = this.state.count + 1;
       this.setState({count: temp});
