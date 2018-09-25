@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './ViewUsers.css';
 import EditQuiz from './EditQuiz';
+import PlayQuiz from './PlayQuiz';
 
 class ViewQuizzes extends Component {
   constructor() {
@@ -13,6 +14,7 @@ class ViewQuizzes extends Component {
       clicked: false
     }
     this.editQuiz = this.editQuiz.bind(this);
+    this.playQuiz = this.playQuiz.bind(this);
   }
 
   componentDidMount() {
@@ -42,11 +44,19 @@ class ViewQuizzes extends Component {
     this.setState({clicked: true});
   }
 
+  playQuiz(event) {
+    this.setState({genre_id: event.target.value});
+    this.setState({clicked: true});
+  }
+
   render() {
     return (
       <div>
         {
-          this.state.clicked && <EditQuiz genre_id={this.state.genre_id}/>
+          this.state.admin.type==="admin" && this.state.clicked && <EditQuiz genre_id={this.state.genre_id}/>
+        }
+         {
+          this.state.admin.type!=="admin" && this.state.clicked && <PlayQuiz genre_id={this.state.genre_id}/>
         }
       {!this.state.clicked &&
       <div className="App">
@@ -56,6 +66,7 @@ class ViewQuizzes extends Component {
               <th>ID</th>
               <th>Topic</th>
               {this.state.admin.type==="admin" && <th>Edit</th>}
+              {this.state.admin.type!=="admin" && <th>Play</th>}
             </tr>
           </thead>
           <tbody>{this.state.data.map((item, key)=> {
@@ -65,6 +76,9 @@ class ViewQuizzes extends Component {
                       <td>{item.genre}</td>
                       {this.state.admin.type==="admin" && 
                         <td><button type="submit" className="btn btn-success btn-md" onClick={this.editQuiz} value={item.id}>Edit</button></td>
+                      }
+                      {this.state.admin.type!=="admin" && 
+                        <td><button type="submit" className="btn btn-success btn-md" onClick={this.playQuiz} value={item.id}>Play</button></td>
                       }
                   </tr>
                 )

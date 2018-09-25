@@ -22,6 +22,21 @@ func GetQuizGenres(db *gorm.DB, response http.ResponseWriter, request *http.Requ
 	}
 }
 
+func GetQuestionOptions(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	question_id := vars["question_id"]
+	var options []model.Option
+	bytes := []byte(question_id)
+	json.Unmarshal(bytes, &options)
+	if err := db.Where("question_id = ?", question_id).Find(&options).Error; err != nil {
+		ErrorResponse(response, http.StatusNotFound, err.Error())
+	 	fmt.Println(err)
+	} else {
+		JSONResponse(response, http.StatusOK, options)
+  	}
+
+}
+
 func GetGenreQuestions(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
 	genre_id := vars["genre_id"]

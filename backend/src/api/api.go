@@ -38,6 +38,7 @@ func Run() {
 	router.HandleFunc("/logout", Logout).Methods("POST")
 
 	router.HandleFunc("/genres", GetQuizGenres).Methods("GET")
+	router.HandleFunc("/question/{question_id}", GetQuestionOptions).Methods("GET")
 	router.HandleFunc("/genre/{genre_id}", GetGenreQuestions).Methods("GET")
 	router.HandleFunc("/create/genre", CreateQuizGenre).Methods("POST")
 	router.HandleFunc("/question", CreateQuizQuestion).Methods("POST")
@@ -87,6 +88,10 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 func GetQuizGenres(w http.ResponseWriter, r *http.Request) {
 	controller.GetQuizGenres(db, w, r)
+}
+
+func GetQuestionOptions(w http.ResponseWriter, r *http.Request) {
+	controller.GetQuestionOptions(db, w, r)
 }
 
 func GetGenreQuestions(w http.ResponseWriter, r *http.Request) {

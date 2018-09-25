@@ -118,6 +118,10 @@ class EditQuiz extends Component {
   render() {
     return (
       <div className="App">
+
+          <button type="submit" className="btn btn-success btn-lg" onClick={this.return}>Back</button>
+
+          <br />
           <div className="container">
             <div className="col-xs-8 col-xs-offset-2 jumbotron text-center">
           <div className="formContainer">
@@ -155,8 +159,6 @@ class EditQuiz extends Component {
             </form>
           </div>
           </div></div>
-
-          <button type="submit" className="btn btn-success btn-lg" onClick={this.return}>Back</button>
 
           <div>{this.state.data.map((item, key)=> {
             return (
