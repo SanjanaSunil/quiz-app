@@ -25,7 +25,7 @@ class EditQuiz extends Component {
     this.handleOptionTwo = this.handleOptionTwo.bind(this);
     this.handleOptionThree = this.handleOptionThree.bind(this);
     this.handleOptionFour = this.handleOptionFour.bind(this);
-    
+
     this.handleAnsOne = this.handleAnsOne.bind(this);
     this.handleAnsTwo = this.handleAnsTwo.bind(this);
     this.handleAnsThree = this.handleAnsThree.bind(this);
@@ -130,25 +130,25 @@ class EditQuiz extends Component {
                 <label>Option 1</label>
                 <input type="text" className="form-control" value={this.state.option1} onChange={this.handleOptionOne}/>
                 <p>Select if this answer is correct</p>
-                <input type="radio" name="radioInput" value={this.state.answer1} onChange={this.handleAnsOne}/>
+                <input type="checkbox" name="checkInput" value={this.state.answer1} onChange={this.handleAnsOne}/>
             </div>
             <div className="form-group">
                 <label>Option 2</label>
                 <input type="text" className="form-control" value={this.state.option2} onChange={this.handleOptionTwo}/>
                 <p>Select if this answer is correct</p>
-                <input type="radio" name="radioInput" value={this.state.answer2} onChange={this.handleAnsTwo}/>
+                <input type="checkbox" name="checkInput" value={this.state.answer2} onChange={this.handleAnsTwo}/>
             </div>
             <div className="form-group">
                 <label>Option 3</label>
                 <input type="text" className="form-control" value={this.state.option3} onChange={this.handleOptionThree}/>
                 <p>Select if this answer is correct</p>
-                <input type="radio" name="radioInput" value={this.state.answer3} onChange={this.handleAnsThree}/>
+                <input type="checkbox" name="checkInput" value={this.state.answer3} onChange={this.handleAnsThree}/>
             </div>
             <div className="form-group">
                 <label>Option 4</label>
                 <input type="text" className="form-control" value={this.state.option4} onChange={this.handleOptionFour}/>
                 <p>Select if this answer is correct</p>
-                <input type="radio" name="radioInput" value={this.state.answer4} onChange={this.handleAnsFour}/>
+                <input type="checkbox" name="checkInput" value={this.state.answer4} onChange={this.handleAnsFour}/>
             </div>
                 <br></br>
                 <button type="submit" className="btn btn-primary btn-lg btn-login btn-block">Create Question</button>

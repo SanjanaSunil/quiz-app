@@ -19,12 +19,12 @@ type Option struct {
 }
 
 type TempOptionList struct {
-	Option1 string
-	Answer1 string
-	Option2 string
-	Answer2 string 
-	Option3 string 
-	Answer3 string 
-	Option4 string 
-	Answer4 string
+	Option1 string `json:"option1"`
+	Answer1 string `json:"answer1"`
+	Option2 string `json:"option2"`
+	Answer2 string `json:"answer2"`
+	Option3 string `json:"option3"`
+	Answer3 string `json:"answer3"`
+	Option4 string `json:"option4"`
+	Answer4 string `json:"answer4"`
 }

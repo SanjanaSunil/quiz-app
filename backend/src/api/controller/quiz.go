@@ -89,6 +89,6 @@ func CreateQuizQuestion(db *gorm.DB, response http.ResponseWriter, request *http
 
 	CreateOption(tempoptions.Option1, tempoptions.Answer1, question.ID, db, response)
 	CreateOption(tempoptions.Option2, tempoptions.Answer2, question.ID, db, response)
-	CreateOption(tempoptions.Option3, tempoptions.Answer4, question.ID, db, response)
-	CreateOption(tempoptions.Option3, tempoptions.Answer4, question.ID, db, response)
+	CreateOption(tempoptions.Option3, tempoptions.Answer3, question.ID, db, response)
+	CreateOption(tempoptions.Option4, tempoptions.Answer4, question.ID, db, response)
 }
