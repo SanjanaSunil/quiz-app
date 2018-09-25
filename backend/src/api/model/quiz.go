@@ -18,6 +18,13 @@ type Option struct {
 	Answer string `json:"answer"`
 }
 
+type Score struct {
+	ID uint `json:"id"`
+	Username string `json:"username"`
+	GenreId uint `json:"genre_id"`
+	Score uint `json:"score"`
+}
+
 type TempOptionList struct {
 	Option1 string `json:"option1"`
 	Answer1 string `json:"answer1"`

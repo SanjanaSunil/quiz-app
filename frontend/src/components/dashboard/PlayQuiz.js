@@ -14,7 +14,8 @@ class PlayQuiz extends Component {
       answer2: "false",
       answer3: "false",
       answer4: "false",
-      end: false
+      end: false,
+      user_details: []
     }
     this.return = this.return.bind(this);
     this.fetchQuestions = this.fetchQuestions.bind(this);
@@ -89,19 +90,31 @@ class PlayQuiz extends Component {
 
   componentDidMount() {
     this.fetchQuestions();
+    fetch('http://localhost:8000/user', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+      .then(response =>
+        //if(response.status === 200)
+          // console.log(response.status);
+          response.json())
+      .then(user_details => this.setState({user_details: user_details}));
   }
 
   render() {
     return (
       <div className="App">
         <button type="submit" className="btn btn-warning btn-lg" onClick={this.return}>Back</button>
-        {this.state.end && <QuizScore count={this.state.count}/>}
+        {this.state.end && <QuizScore count={this.state.count} genre_id={this.props.genre_id} username={this.state.user_details.username}/>}
       {!this.state.end && 
       <div>
           <br />
-          <div class="progress" style={{width: window.innerWidth}}>
-            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow={this.state.count*window.innerWidth/this.state.data.length} aria-valuemin="0" aria-valuemax={window.innerWidth} style={{width:this.state.count*window.innerWidth/this.state.data.length}}>
-                <span class="sr-only">{this.state.count*100/this.state.data.length} Complete</span>
+          <div className="progress" style={{width: window.innerWidth}}>
+            <div className="progress-bar progress-bar-success" role="progressbar" aria-valuenow={this.state.count*window.innerWidth/this.state.data.length} aria-valuemin="0" aria-valuemax={window.innerWidth} style={{width:this.state.count*window.innerWidth/this.state.data.length}}>
+                <span className="sr-only">{this.state.count*100/this.state.data.length} Complete</span>
             </div>
           </div> 
           <h4>Score: {this.state.count}</h4>

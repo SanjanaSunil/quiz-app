@@ -107,3 +107,20 @@ func CreateQuizQuestion(db *gorm.DB, response http.ResponseWriter, request *http
 	CreateOption(tempoptions.Option3, tempoptions.Answer3, question.ID, db, response)
 	CreateOption(tempoptions.Option4, tempoptions.Answer4, question.ID, db, response)
 }
+
+func SubmitScore(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
+	var score model.Score
+	fmt.Println(request.Body)
+	decoder := json.NewDecoder(request.Body)
+	fmt.Println(decoder)
+	if err := decoder.Decode(&score); err != nil {
+		ErrorResponse(response, http.StatusBadRequest, err.Error())
+		return
+	}
+	defer request.Body.Close()
+	if err := db.Save(&score).Error; err != nil {
+		ErrorResponse(response, http.StatusInternalServerError, err.Error())
+		return
+	}
+	JSONResponse(response, http.StatusOK, score)
+}
