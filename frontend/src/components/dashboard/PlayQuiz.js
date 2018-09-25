@@ -36,10 +36,10 @@ class PlayQuiz extends Component {
   }
 
   handleAns(key, event) {
-    if(key===0) this.setState({answer1: event.target.value});
-    if(key===1) this.setState({answer2: event.target.value});
-    if(key===2) this.setState({answer3: event.target.value});
-    if(key===3) this.setState({answer4: event.target.value});
+    if(key===0) this.setState({answer1: "true"});
+    if(key===1) this.setState({answer2: "true"});
+    if(key===2) this.setState({answer3: "true"});
+    if(key===3) this.setState({answer4: "true"});
   }
 
   return(event) {
