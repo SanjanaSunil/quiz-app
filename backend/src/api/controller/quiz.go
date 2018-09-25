@@ -51,6 +51,17 @@ func CreateQuizGenre(db *gorm.DB, response http.ResponseWriter, request *http.Re
 	}
 }
 
+func CreateOption(opt string, answer string, question_id uint, db *gorm.DB, response http.ResponseWriter) {
+	var option model.Option
+	option.Option = opt
+	option.Answer = answer
+	option.QuestionId = question_id
+	if err := db.Save(&option).Error; err != nil {
+		ErrorResponse(response, http.StatusInternalServerError, err.Error())
+		return
+	}
+}
+
 func CreateQuizQuestion(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
 	var question model.Question
 	buf, _ := ioutil.ReadAll(request.Body)
@@ -61,22 +72,23 @@ func CreateQuizQuestion(db *gorm.DB, response http.ResponseWriter, request *http
 		ErrorResponse(response, http.StatusBadRequest, err.Error())
 		return
 	}
-	defer request.Body.Close()
+	defer rdr1.Close()
 	if err := db.Save(&question).Error; err != nil {
 		ErrorResponse(response, http.StatusInternalServerError, err.Error())
 		return
 	}
-	var option model.Option
+
+	var tempoptions model.TempOptionList
 	request.Body = rdr2
 	decoder = json.NewDecoder(request.Body)
-	if err := decoder.Decode(&option); err != nil {
+	if err := decoder.Decode(&tempoptions); err != nil {
 		ErrorResponse(response, http.StatusBadRequest, err.Error())
 		return
 	}
 	defer request.Body.Close()
-	option.QuestionId = question.ID
-	if err := db.Save(&option).Error; err != nil {
-		ErrorResponse(response, http.StatusInternalServerError, err.Error())
-		return
-	}
+
+	CreateOption(tempoptions.Option1, tempoptions.Answer1, question.ID, db, response)
+	CreateOption(tempoptions.Option2, tempoptions.Answer2, question.ID, db, response)
+	CreateOption(tempoptions.Option3, tempoptions.Answer4, question.ID, db, response)
+	CreateOption(tempoptions.Option3, tempoptions.Answer4, question.ID, db, response)
 }

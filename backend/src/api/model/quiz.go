@@ -17,3 +17,14 @@ type Option struct {
 	Option string `json:"option"`
 	Answer string `json:"answer"`
 }
+
+type TempOptionList struct {
+	Option1 string
+	Answer1 string
+	Option2 string
+	Answer2 string 
+	Option3 string 
+	Answer3 string 
+	Option4 string 
+	Answer4 string
+}
