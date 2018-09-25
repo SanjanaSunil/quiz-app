@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import QuizScore from './QuizScore';
+import './PlayQuiz.css'
 
 class PlayQuiz extends Component {
   constructor(props) {
@@ -23,8 +24,9 @@ class PlayQuiz extends Component {
   }
 
   verify() {
+    var temp;
     if(this.state.count===this.state.data.length-1) {
-      var temp = this.state.count + 1;
+      temp = this.state.count + 1;
       this.setState({count: temp});
       this.setState({end: true});
       return;
@@ -34,7 +36,7 @@ class PlayQuiz extends Component {
     var key3 = document.getElementById("2").value;
     var key4 = document.getElementById("3").value;
     if(this.state.answer1===key1 && this.state.answer2===key2 && this.state.answer3===key3 && this.state.answer4===key4) {
-      var temp = this.state.count + 1;
+      temp = this.state.count + 1;
       this.setState({count: temp});
     }
     else {
@@ -86,12 +88,16 @@ class PlayQuiz extends Component {
   render() {
     return (
       <div className="App">
-        <button type="submit" className="btn btn-success btn-lg" onClick={this.return}>Back</button>
-
+        <button type="submit" className="btn btn-warning btn-lg" onClick={this.return}>Back</button>
         {this.state.end && <QuizScore count={this.state.count}/>}
       {!this.state.end && 
       <div>
           <br />
+          <div class="progress" style={{width: window.innerWidth}}>
+            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow={this.state.count*window.innerWidth/this.state.data.length} aria-valuemin="0" aria-valuemax={window.innerWidth} style={{width:this.state.count*window.innerWidth/this.state.data.length}}>
+                <span class="sr-only">{this.state.count*100/this.state.data.length} Complete</span>
+            </div>
+          </div> 
           <h4>Score: {this.state.count}</h4>
           <div>{this.state.data.map((item, key)=> {
             return (
@@ -116,6 +122,7 @@ class PlayQuiz extends Component {
       </div>
     );
   }
+  
 }
 
 export default PlayQuiz;
