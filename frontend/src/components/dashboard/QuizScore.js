@@ -4,7 +4,7 @@ class QuizScore extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            score: this.props.count
+            score: parseInt(this.props.count, 10)
         }
       }
 

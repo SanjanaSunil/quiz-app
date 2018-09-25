@@ -23,6 +23,12 @@ class PlayQuiz extends Component {
   }
 
   verify() {
+    if(this.state.count===this.state.data.length-1) {
+      var temp = this.state.count + 1;
+      this.setState({count: temp});
+      this.setState({end: true});
+      return;
+    }
     var key1 = document.getElementById("0").value;
     var key2 = document.getElementById("1").value;
     var key3 = document.getElementById("2").value;
@@ -86,7 +92,7 @@ class PlayQuiz extends Component {
       {!this.state.end && 
       <div>
           <br />
-          <h4>{this.state.count}</h4>
+          <h4>Score: {this.state.count}</h4>
           <div>{this.state.data.map((item, key)=> {
             return (
                <div key = {key}>{ this.state.count===key &&
