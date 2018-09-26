@@ -128,6 +128,12 @@ func CreateQuizQuestion(db *gorm.DB, response http.ResponseWriter, request *http
 	}
 	defer request.Body.Close()
 
+	var option model.Option
+	if err := db.Where("question_id = ?", question.ID).Delete(&option).Error; err != nil {
+		ErrorResponse(response, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	CreateOption(tempoptions.Option1, tempoptions.Answer1, question.ID, db, response)
 	CreateOption(tempoptions.Option2, tempoptions.Answer2, question.ID, db, response)
 	CreateOption(tempoptions.Option3, tempoptions.Answer3, question.ID, db, response)
@@ -203,4 +209,14 @@ func GetLeaderboard(db *gorm.DB, response http.ResponseWriter, request *http.Req
 		temp = append(temp, Temp{Max: element.Max, Username: element.Username, Genre: quiz.Genre})
 	}
 	JSONResponse(response, http.StatusOK, temp)
+}
+
+func GetOptions(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
+	var options []model.Option
+	if err := db.Find(&options).Error; err != nil {
+		ErrorResponse(response, http.StatusNotFound, err.Error())
+		fmt.Println(err)
+  	} else {
+		JSONResponse(response, http.StatusOK, options)
+	}
 }

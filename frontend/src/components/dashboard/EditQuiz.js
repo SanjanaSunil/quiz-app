@@ -15,11 +15,13 @@ class EditQuiz extends Component {
       option4: "",
       answer4: "false",
       data: [],
+      options: []
     }
     this.return = this.return.bind(this);
     this.handleQChange = this.handleQChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.fetchQuestions = this.fetchQuestions.bind(this);
+    this.fetchOptions = this.fetchOptions.bind(this);
 
     this.handleOptionOne = this.handleOptionOne.bind(this);
     this.handleOptionTwo = this.handleOptionTwo.bind(this);
@@ -32,6 +34,9 @@ class EditQuiz extends Component {
     this.handleAnsFour = this.handleAnsFour.bind(this);
 
     this.deleteQuestion = this.deleteQuestion.bind(this);
+    this.updateOption = this.updateOption.bind(this);
+    this.updateAnswer = this.updateAnswer.bind(this);
+    this.editQuestion = this.editQuestion.bind(this);
   }
 
   return(event) {
@@ -86,6 +91,18 @@ class EditQuiz extends Component {
       .then(data => this.setState({data: data}));
   }
 
+  fetchOptions(event) {
+    fetch('http://localhost:8000/options', {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+    })
+      .then(response => response.json())
+      .then(options => this.setState({options: options}));
+  }
+
   deleteQuestion(event) {
     fetch('http://localhost:8000/delete/question/' + event.target.value, {
       method: 'POST',
@@ -93,6 +110,83 @@ class EditQuiz extends Component {
     })
       .then(response => {window.location.reload();});
   }
+
+  updateOption(key, event) {
+    this.state.options[key].option = event.target.value;
+  }
+
+  updateAnswer(key, event) {
+    var temp = this.state.options;
+    if(this.state.options[key].answer==="true") temp[key].answer = "false";
+    else temp[key].answer = "true";
+    this.setState({options: temp});
+  }
+
+  editQuestion(submitquestion, event) {
+    var submission = {
+      id: parseInt(event.target.value, 10),
+      genre_id: this.state.genre_id,
+      question: submitquestion,
+      option1: "",
+      option2: "",
+      option3: "",
+      option4: "",
+      answer1: "",
+      answer2: "",
+      answer3: "",
+      answer4: "",
+    }
+    var temp = 0;
+    for(var i=0; i<this.state.options.length; i++) {
+      if(parseInt(this.state.options[i].question_id, 10) === parseInt(event.target.value, 10)) {
+        if(temp===0) {
+          submission.option1 = this.state.options[i].option;
+          submission.answer1 = this.state.options[i].answer;
+          temp++;
+          continue;
+        }
+        if(temp===1) {
+          submission.option2 = this.state.options[i].option;
+          submission.answer2 = this.state.options[i].answer;
+          temp++;
+          continue;
+        }
+        if(temp===2) {
+          submission.option3 = this.state.options[i].option;
+          submission.answer3 = this.state.options[i].answer;
+          temp++;
+          continue;
+        }
+        if(temp===3) {
+          submission.option4 = this.state.options[i].option;
+          submission.answer4 = this.state.options[i].answer;
+          temp++;
+          continue;
+        }
+      }
+    }
+
+    console.log(submission);
+    fetch('http://localhost:8000/question', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(submission),
+    })
+    .then(response => {
+      if(response.status >= 200 && response.status < 300) {
+        this.fetchQuestions();
+        this.fetchOptions();
+        window.location.reload();
+      }
+    });
+  }
+
+
+
+
 
   handleSubmit(event) {
     event.preventDefault();
@@ -116,6 +210,7 @@ class EditQuiz extends Component {
           this.setState({answer3: "false"});
           this.setState({answer4: "false"});
           this.fetchQuestions();
+          this.fetchOptions();
       }   
 
   });
@@ -123,6 +218,7 @@ class EditQuiz extends Component {
 
   componentDidMount() {
     this.fetchQuestions();
+    this.fetchOptions();
   }
 
   render() {
@@ -182,8 +278,27 @@ class EditQuiz extends Component {
                return (
                   <tr key = {key}>
                       <td>{key+1}</td>
-                      <td>{item.question}</td>
+                      <td><p>Question: </p><input type="text" placeholder={item.question} /><p>Options: </p>
+                      {this.state.options.map((itemtwo, keytwo)=> {
+                        return (
+                          <div key={keytwo}>
+                          { item.id===itemtwo.question_id &&
+                            <div>
+                              <input type="text" placeholder={itemtwo.option} onChange={(event) =>this.updateOption(keytwo, event)} />
+                              { itemtwo.answer==="true" &&
+                                <input type="checkbox" name="checkBox" value={itemtwo.answer} onClick={(event) =>this.updateAnswer(keytwo, event)} checked/>
+                              }
+                              { itemtwo.answer!=="true" &&
+                                <input type="checkbox" name="checkBox" value={itemtwo.answer} onClick={(event) =>this.updateAnswer(keytwo, event)}/>
+                              }
+                            </div>
+                          }</div>
+                        )
+                      })}
+                      <button type="submit" className="btn btn-primary btn-md" onClick={(event) =>this.editQuestion(item.question, event)} value={item.id}>Edit</button>
+                      </td>
                       <td><button type="submit" className="btn btn-danger btn-md" onClick={this.deleteQuestion} value={item.id}>Delete</button></td>
+
                   </tr>
                 )
              })}
