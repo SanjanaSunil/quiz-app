@@ -25,7 +25,7 @@ class ViewScores extends Component {
     render() {
         return (
             <div className="App">
-                <h1>{this.props.data.username}</h1>
+                <h3><b>SCOREBOARD</b></h3>
 
                 <table className="table-hover">
           <thead>
@@ -37,7 +37,7 @@ class ViewScores extends Component {
           <tbody>{this.state.data.map((item, key)=> {
                return (
                   <tr key = {key}>
-                      <td>{item.genre_id}</td>
+                      <td>{item.genre}</td>
                       <td>{item.score}</td>
                   </tr>
                 )

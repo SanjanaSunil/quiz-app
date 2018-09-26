@@ -124,6 +124,10 @@ func SubmitScore(db *gorm.DB, response http.ResponseWriter, request *http.Reques
 }
 
 func GetUserScores(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
+	type Temp struct {
+		Score uint `json:"score"`
+		Genre string `json:"genre"`
+	}
 	vars := mux.Vars(request)
 	user := vars["user"]
 	var scores []model.Score
@@ -131,6 +135,41 @@ func GetUserScores(db *gorm.DB, response http.ResponseWriter, request *http.Requ
 		ErrorResponse(response, http.StatusNotFound, err.Error())
 		fmt.Println(err)
   	} else {
-		JSONResponse(response, http.StatusOK, scores)
+		var temp []Temp 
+		for _, element := range scores {
+			var quiz model.Quiz
+			if err := db.Where("id = ?", element.GenreId).First(&quiz).Error; err != nil {
+				ErrorResponse(response, http.StatusNotFound, err.Error())
+				 fmt.Println(err)
+			}
+			temp = append(temp, Temp{Score: element.Score, Genre: quiz.Genre})
+		}
+		JSONResponse(response, http.StatusOK, temp)
+	}
+}
+
+func GetLeaderboard(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
+	type Temp struct {
+		Leader string `json:"leader"`
+	}
+	vars := mux.Vars(request)
+	genre_id := vars["genre_id"]
+	var scores []model.Score
+	var leader string
+	if err := db.Where("genre_id = ?", genre_id).Find(&scores).Error; err != nil {
+		ErrorResponse(response, http.StatusNotFound, err.Error())
+		fmt.Println(err)
+  	} else {
+		var maximum uint = 0
+		for _, element := range scores {
+			if(element.Score >= maximum) {
+				maximum = element.Score
+				leader =  element.Username
+			}
+		}
+		var temp Temp
+		temp.Leader = leader
+		JSONResponse(response, http.StatusOK, temp)
+
 	}
 }

@@ -44,6 +44,7 @@ func Run() {
 	router.HandleFunc("/question", CreateQuizQuestion).Methods("POST")
 
 	router.HandleFunc("/scoreboard/{user}", GetUserScores).Methods("GET")
+	router.HandleFunc("/leaderboard/{genre_id}", GetLeaderboard).Methods("GET")
 	router.HandleFunc("/score", SubmitScore).Methods("POST")
 
 	c := cors.New(cors.Options{
@@ -115,4 +116,8 @@ func SubmitScore(w http.ResponseWriter, r *http.Request) {
 
 func GetUserScores(w http.ResponseWriter, r *http.Request) {
 	controller.GetUserScores(db, w, r)
+}
+
+func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
+	controller.GetLeaderboard(db, w, r)
 }
