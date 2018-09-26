@@ -66,6 +66,19 @@ func CreateQuizGenre(db *gorm.DB, response http.ResponseWriter, request *http.Re
 	}
 }
 
+func DeleteQuizGenre(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	genre_id := vars["genre_id"]
+	var quizzes []model.Quiz
+	bytes := []byte(genre_id)
+	json.Unmarshal(bytes, &quizzes)
+	if err := db.Where("id = ?", genre_id).First(&quizzes).Delete(&quizzes).Error; err != nil {
+		ErrorResponse(response, http.StatusInternalServerError, err.Error())
+		fmt.Println(err)
+	} 
+	JSONResponse(response, http.StatusNoContent, nil)
+}
+
 func CreateOption(opt string, answer string, question_id uint, db *gorm.DB, response http.ResponseWriter) {
 	var option model.Option
 	option.Option = opt

@@ -15,6 +15,15 @@ class ViewQuizzes extends Component {
     }
     this.editQuiz = this.editQuiz.bind(this);
     this.playQuiz = this.playQuiz.bind(this);
+    this.deleteQuiz = this.deleteQuiz.bind(this);
+  }
+
+  deleteQuiz(event) {
+    fetch('http://localhost:8000/delete/' + event.target.value, {
+      method: 'POST',
+      credentials: 'include',
+    })
+      .then(response => {window.location.reload();});
   }
 
   componentDidMount() {
@@ -66,6 +75,7 @@ class ViewQuizzes extends Component {
               <th>ID</th>
               <th>Topic</th>
               {this.state.admin.type==="admin" && <th>Edit</th>}
+              {this.state.admin.type==="admin" && <th>Delete</th>}
               {this.state.admin.type!=="admin" && <th>Play</th>}
             </tr>
           </thead>
@@ -76,6 +86,9 @@ class ViewQuizzes extends Component {
                       <td>{item.genre}</td>
                       {this.state.admin.type==="admin" && 
                         <td><button type="submit" className="btn btn-success btn-md" onClick={this.editQuiz} value={item.id}>Edit</button></td>
+                      }
+                      {this.state.admin.type==="admin" && 
+                        <td><button type="submit" className="btn btn-danger btn-md" onClick={this.deleteQuiz} value={item.id}>Delete</button></td>
                       }
                       {this.state.admin.type!=="admin" && 
                         <td><button type="submit" className="btn btn-success btn-md" onClick={this.playQuiz} value={item.id}>Play</button></td>
