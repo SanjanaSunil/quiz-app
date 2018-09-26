@@ -30,7 +30,7 @@ class QuizScore extends Component {
     }
     render() {
         return (
-            <div className="App"><h3>Final Score: {this.state.score} {this.state.username}</h3></div>
+            <div className="App"><h3>Final Score: {this.state.score}</h3></div>
         )
     }
 }

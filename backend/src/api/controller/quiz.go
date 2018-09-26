@@ -110,9 +110,7 @@ func CreateQuizQuestion(db *gorm.DB, response http.ResponseWriter, request *http
 
 func SubmitScore(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
 	var score model.Score
-	fmt.Println(request.Body)
 	decoder := json.NewDecoder(request.Body)
-	fmt.Println(decoder)
 	if err := decoder.Decode(&score); err != nil {
 		ErrorResponse(response, http.StatusBadRequest, err.Error())
 		return
@@ -123,4 +121,16 @@ func SubmitScore(db *gorm.DB, response http.ResponseWriter, request *http.Reques
 		return
 	}
 	JSONResponse(response, http.StatusOK, score)
+}
+
+func GetUserScores(db *gorm.DB, response http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	user := vars["user"]
+	var scores []model.Score
+	if err := db.Where("username = ?", user).Find(&scores).Error; err != nil {
+		ErrorResponse(response, http.StatusNotFound, err.Error())
+		fmt.Println(err)
+  	} else {
+		JSONResponse(response, http.StatusOK, scores)
+	}
 }

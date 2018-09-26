@@ -4,6 +4,7 @@ import ViewQuizzes from './ViewQuizzes';
 import CreateQuiz from './CreateQuiz';
 
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import ViewScores from './ViewScores';
 
 class Dashboard extends Component {
   constructor() {
@@ -78,6 +79,9 @@ class Dashboard extends Component {
                     {this.state.admin.type==="admin" && 
                       <li><Link to={'/CreateQuiz'}>Create A Quiz</Link></li>
                     }
+                    {this.state.admin.type!=="admin" &&
+                        <li><Link to={'/ViewScores'}>View scores</Link></li>
+                    }
                   </ul>
                   <ul className="nav navbar-nav navbar-right">
                     <li><button onClick={this.logout} className="btn btn-danger btn-lg btn-login btn-block">Log out</button></li>
@@ -92,6 +96,9 @@ class Dashboard extends Component {
                     <Route exact path='/CreateQuiz' component={CreateQuiz} />
                 }
                 <Route exact path='/ViewQuizzes' component={ViewQuizzes} />
+                {this.state.admin.type!=="admin" &&
+                        <Route exact path='/ViewScores' render={(props) => <ViewScores {...props} data={this.state.data} />} />
+                }
               </Switch>
             </div>
           </Router>
