@@ -112,7 +112,9 @@ class EditQuiz extends Component {
   }
 
   updateOption(key, event) {
-    this.state.options[key].option = event.target.value;
+    var temp = this.state.options;
+    temp[key].option = event.target.value;
+    this.setState({options: temp});
   }
 
   updateAnswer(key, event) {
