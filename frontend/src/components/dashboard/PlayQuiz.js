@@ -10,11 +10,13 @@ class PlayQuiz extends Component {
       data: [],
       options: [],
       count: 0,
+      score: 0,
       answer1: "false",
       answer2: "false",
       answer3: "false",
       answer4: "false",
       end: false,
+      lives: [1, 1, 1],
       user_details: []
     }
     this.return = this.return.bind(this);
@@ -26,12 +28,7 @@ class PlayQuiz extends Component {
 
   verify() {
     var temp;
-    if(this.state.count===this.state.data.length-1) {
-      temp = this.state.count + 1;
-      this.setState({count: temp});
-      this.setState({end: true});
-      return;
-    }
+
     var key1 = document.getElementById("0").value;
     var key2 = document.getElementById("1").value;
     var key3 = document.getElementById("2").value;
@@ -45,10 +42,22 @@ class PlayQuiz extends Component {
     if(this.state.answer1===key1 && this.state.answer2===key2 && this.state.answer3===key3 && this.state.answer4===key4) {
       temp = this.state.count + 1;
       this.setState({count: temp});
+      temp = this.state.score + 10;
+      this.setState({score: temp});
     }
     else {
-      this.setState({end: true});
+      if(this.state.lives.length===1)
+      {
+        this.setState({end: true});
+        return;
+      }
+      else
+      {
+        this.state.lives.pop();
+      }
     }
+
+    if(this.state.count===this.state.data.length-1) this.setState({end: true});
 
   }
 
@@ -108,7 +117,7 @@ class PlayQuiz extends Component {
     return (
       <div className="App">
         <button type="submit" className="btn btn-warning btn-lg" onClick={this.return}>Back</button>
-        {this.state.end && <QuizScore count={this.state.count} genre_id={this.props.genre_id} username={this.state.user_details.username}/>}
+        {this.state.end && <QuizScore count={this.state.score} genre_id={this.props.genre_id} username={this.state.user_details.username}/>}
       {!this.state.end && 
       <div>
           <br />
@@ -117,7 +126,8 @@ class PlayQuiz extends Component {
                 <span className="sr-only">{this.state.count*100/this.state.data.length} Complete</span>
             </div>
           </div> 
-          <h4>Score: {this.state.count}</h4>
+          <div>{this.state.lives.map((item, key)=>{return (<div className="heart"><span className="glyphicon glyphicon-heart"></span></div>)})}</div>
+          <h4>Score: {this.state.score}</h4>
           <div>{this.state.data.map((item, key)=> {
             return (
                <div key = {key}>{ this.state.count===key &&

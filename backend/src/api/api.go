@@ -27,6 +27,7 @@ func Run() {
 	defer db.Close()
 	  
 	db.AutoMigrate(&model.User{}, &model.Quiz{})
+	db.Exec("PRAGMA foreign_keys = ON")
 
 	router.HandleFunc("/users", GetUsers).Methods("GET")
 	router.HandleFunc("/user", Authenticate).Methods("GET")
