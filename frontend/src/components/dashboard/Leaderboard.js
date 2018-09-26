@@ -32,7 +32,7 @@ class Leaderboard extends Component {
               <th>Lead Player</th>
               <th>Score</th>
             </tr>
-          </thead>
+          </thead>{this.state.data &&
           <tbody>{this.state.data.map((item, key)=> {
                return (
                   <tr key = {key}>
@@ -42,7 +42,7 @@ class Leaderboard extends Component {
                   </tr>
                 )
              })}
-          </tbody>
+          </tbody>}
        </table>
             </div>
         );
