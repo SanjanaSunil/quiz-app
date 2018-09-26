@@ -33,7 +33,7 @@ class ViewScores extends Component {
               <th>Genre</th>
               <th>Score</th>
             </tr>
-          </thead>
+          </thead>{this.state.data &&
           <tbody>{this.state.data.map((item, key)=> {
                return (
                   <tr key = {key}>
@@ -42,7 +42,7 @@ class ViewScores extends Component {
                   </tr>
                 )
              })}
-          </tbody>
+          </tbody>}
        </table>
             </div>
         );
