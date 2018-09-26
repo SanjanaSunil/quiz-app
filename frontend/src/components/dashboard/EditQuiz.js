@@ -30,6 +30,8 @@ class EditQuiz extends Component {
     this.handleAnsTwo = this.handleAnsTwo.bind(this);
     this.handleAnsThree = this.handleAnsThree.bind(this);
     this.handleAnsFour = this.handleAnsFour.bind(this);
+
+    this.deleteQuestion = this.deleteQuestion.bind(this);
   }
 
   return(event) {
@@ -84,6 +86,14 @@ class EditQuiz extends Component {
       .then(data => this.setState({data: data}));
   }
 
+  deleteQuestion(event) {
+    fetch('http://localhost:8000/delete/question/' + event.target.value, {
+      method: 'POST',
+      credentials: 'include',
+    })
+      .then(response => {window.location.reload();});
+  }
+
   handleSubmit(event) {
     event.preventDefault();
     fetch('http://localhost:8000/question', {
@@ -106,7 +116,7 @@ class EditQuiz extends Component {
           this.setState({answer3: "false"});
           this.setState({answer4: "false"});
           this.fetchQuestions();
-      }
+      }   
 
   });
   }
@@ -160,11 +170,25 @@ class EditQuiz extends Component {
           </div>
           </div></div>
 
-          <div>{this.state.data.map((item, key)=> {
-            return (
-               <p key = {key}>{key+1}) {item.question}</p>
-             )
-          })}</div>
+          <table className="table-hover">
+          <thead>
+            <tr>
+              <th>Number</th>
+              <th>Question</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>{this.state.data.map((item, key)=> {
+               return (
+                  <tr key = {key}>
+                      <td>{key+1}</td>
+                      <td>{item.question}</td>
+                      <td><button type="submit" className="btn btn-danger btn-md" onClick={this.deleteQuestion} value={item.id}>Delete</button></td>
+                  </tr>
+                )
+             })}
+          </tbody>
+       </table>
 
       </div>
     );
