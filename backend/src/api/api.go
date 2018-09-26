@@ -44,7 +44,7 @@ func Run() {
 	router.HandleFunc("/question", CreateQuizQuestion).Methods("POST")
 
 	router.HandleFunc("/scoreboard/{user}", GetUserScores).Methods("GET")
-	router.HandleFunc("/leaderboard/{genre_id}", GetLeaderboard).Methods("GET")
+	router.HandleFunc("/leaderboard", GetLeaderboard).Methods("GET")
 	router.HandleFunc("/score", SubmitScore).Methods("POST")
 
 	c := cors.New(cors.Options{

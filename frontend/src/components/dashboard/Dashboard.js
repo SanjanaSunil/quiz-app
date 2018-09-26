@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ViewUsers from './ViewUsers';
 import ViewQuizzes from './ViewQuizzes';
 import CreateQuiz from './CreateQuiz';
+import Leaderboard from './Leaderboard';
 
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import ViewScores from './ViewScores';
@@ -76,6 +77,7 @@ class Dashboard extends Component {
                       <li><Link to={'/ViewUsers'}>View Users</Link></li>
                     }
                     <li><Link to={'/ViewQuizzes'}>Quizzes</Link></li>
+                    <li><Link to={'/Leaderboard'}>Leaderboard</Link></li>
                     {this.state.admin.type==="admin" && 
                       <li><Link to={'/CreateQuiz'}>Create A Quiz</Link></li>
                     }
@@ -96,6 +98,7 @@ class Dashboard extends Component {
                     <Route exact path='/CreateQuiz' component={CreateQuiz} />
                 }
                 <Route exact path='/ViewQuizzes' component={ViewQuizzes} />
+                <Route exact path='/Leaderboard' component={Leaderboard} />
                 {this.state.admin.type!=="admin" &&
                         <Route exact path='/ViewScores' render={(props) => <ViewScores {...props} data={this.state.data} />} />
                 }
