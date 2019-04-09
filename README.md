@@ -15,25 +15,25 @@ The packages used in go are:
 
 They can be installed using:
 ```bash
-              go get -u -v github.com/gorilla/mux
-              go get -u -v github.com/rs/cors
-	      go get -u -v github.com/jinzhu/gorm
-              go get -u -v github.com/jinzhu/gorm/dialects/sqlite
-              go get -u -v github.com/gorilla/sessions
+go get -u -v github.com/gorilla/mux
+go get -u -v github.com/rs/cors
+go get -u -v github.com/jinzhu/gorm
+go get -u -v github.com/jinzhu/gorm/dialects/sqlite
+go get -u -v github.com/gorilla/sessions
 ```
 
 To run the app:
 
 * Navigate to the _go/src_ directory and run the following commands:
 
-    ```
-        go run main.go
-    ```
+```
+go run main.go
+```
 * Navigate to the _react-app/_ directory and run the following commands:
-    ```
-        npm install
-        yarn start
-    ```
+```
+npm install
+yarn start
+```
 * Vist localhost:3000/
 
 ## Features
